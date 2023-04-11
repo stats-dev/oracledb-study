@@ -217,4 +217,40 @@ SELECT *
     FROM EMP
     WHERE COMM IS NULL;
 
-    
+--9. 다중 조건 만들기 AND, OR
+--9-1. 모든 조건을 충족하는 데이터를 조회
+--1학년이면서 이름이 '우'로 끝나는 학생 목록 조회
+SELECT *
+    FROM STUDENT
+    WHERE  SYEAR = 1
+        AND SNAME LIKE '%우';
+        
+--회계업무를 하면서 급여가 3000이상이고 이름이 세자인 직원 목록 조회
+SELECT *
+    FROM EMP
+    WHERE JOB = '회계'
+        AND SAL >= 3000
+        AND ENAME LIKE '___';
+        
+--기말고사 성적이 75이상이거나 과목번호가 1211인 학생 목록 조회
+SELECT *
+    FROM SCORE
+    WHERE RESULT >= 75
+        OR CNO = '1211'; --VARCHAR2로 되어 있음. 문자열로 넣기.
+
+--AND, OR 혼합사용.
+--DNO가 10이거나 급여가 1600이상인 직원중 보너스가 600이상인 직원 조회
+--() 괄호를 이용해서 우선순위를 정할 수 있다.
+SELECT *
+    FROM EMP
+    WHERE (DNO = '30'
+        OR SAL >= 2000) --이렇게 우선순위 제공
+        AND COMM >= 600;
+
+--평점이 2.0이상이거나 이름이 3자인 학생중 화학 전공인 학생 목록 출력
+SELECT *
+    FROM STUDENT
+    WHERE (AVR >= 2.0
+        OR SNAME LIKE '___')
+        AND MAJOR = '화학';
+
