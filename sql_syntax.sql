@@ -89,11 +89,43 @@ SELECT ENO
 --학생번호랑 - 기말고사 성적(SCORE)
 SELECT SNO 
       , RESULT
-      , SNO || '-' || RESULT AS SNO_RESULT
+      , SNO || ' - ' || RESULT AS SNO_RESULT
     FROM SCORE;
+ 
+ SELECT SNO || ' - ' || RESULT AS  학번성적
+    FROM SCORE;
+
+ 
     
 --학생번호 : 학생이름 연결해서 출력(STUDENT)
 SELECT SNO
     , SNAME
-    , SNO || '-' || SNAME AS SNO_SNAME
+    , SNO || ' : ' || SNAME AS SNO_SNAME
     FROM STUDENT;
+    
+SELECT SNO || ' : ' || SNAME AS 학번이름
+    FROM STUDENT;
+    
+    
+--6. 중복제거자 DISTINCT
+--기존JOB
+SELECT JOB 
+    FROM EMP;
+
+--6-1. 컬럼 하나에 대한 중복 제거
+SELECT DISTINCT JOB
+    FROM EMP;
+    
+--6-2. 컬럼 두 개이상에 대한 중복 제거
+--각각 컬럼에 DISTINCT를 붙여주는게 아니고
+--두 개의 커럼이 한 쌍의 데이터 셋이 돼서
+--두 개 컬럼의 데이터가 모두 중복되지 않으면
+--중복으로 인식하지 않는다.
+SELECT DISTINCT JOB
+    , MGR
+    FROM EMP;
+    
+-- *을 사용하면 모든 컬럼에서 중복없어야 출력된다.
+SELECT DISTINCT *
+    FROM EMP;
+
