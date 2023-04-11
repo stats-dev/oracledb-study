@@ -128,4 +128,93 @@ SELECT DISTINCT JOB
 -- *을 사용하면 모든 컬럼에서 중복없어야 출력된다.
 SELECT DISTINCT *
     FROM EMP;
+    
+--7. 데이터를 정렬해주는 ORDER BY
+--7-1. 한 개 컬럼에 대한 정렬
+--오름차순으로 정렬, ASC 생략 가능
+SELECT *
+    FROM STUDENT
+    ORDER BY SYEAR ASC; --SYEAR 학년 순으로 정렬이 잘 됩니다.
+    
+SELECT *
+    FROM STUDENT
+    ORDER BY SYEAR ASC; 
+    
+--내림차순으로 정렬. DESC는 생략 불가능.
+SELECT *
+    FROM STUDENT
+    ORDER BY SYEAR DESC;
+    
+--7-2. 두 개의 컬럼을 기준으로 정렬
+--오름차순으로 정렬, ASC 생략 가능
+--컴마를 사용해서 다음 정렬될 대상 컬럼을 지정
+--먼저 지정된 컬럼부터 정렬을 진행하고, 
+--다음 오는 컬럼에 대한 정렬을 진행한다.
+SELECT *
+    FROM STUDENT
+    ORDER BY SYEAR, SNAME ASC; --학년 > 이름 순으로 다시 정렬하게 됩니다
+    
+SELECT *
+    FROM STUDENT
+    ORDER BY SYEAR, MAJOR, AVR ASC; --학년 > 같은 전공(과) > 평점으로 다시 정렬
+    
+--각 컬럼에 대한 정렬 방식을 따로 지정할 수 있다.
+SELECT *
+    FROM STUDENT
+    ORDER BY SYEAR DESC, MAJOR, AVR ASC; --학년 내림차순 > 같은 전공(과) > 평점 오름차순으로 다시 정렬
+    
+-- 부서별(DNO)로 정렬하는데 급여(SAL)가 높은 사람 먼저 나오도록(EMP)
+-- ENO, ENAME, DNO, SAL
+SELECT ENO
+    , ENAME
+    , DNO AS 부서번호
+    , SAL AS 급여
+    FROM EMP
+    ORDER BY DNO, SAL DESC; -- (ASC) 생략 가능
+    
 
+--별칭을 붙인 경우에는 별칭으로 정렬도 가능
+SELECT ENO
+    , ENAME
+    , DNO AS 부서번호
+    , SAL AS 급여
+    FROM EMP
+    ORDER BY 부서번호, 급여 DESC; -- (ASC) 생략 가능
+    
+    
+--8. 조건을 걸어주는 WHERE
+--8-1. 값의 크기 비교
+--급여가 3000이상인 직원목록 조회
+SELECT *
+    FROM EMP
+    WHERE SAL >= 3000;
+
+--전공이 화학과인 학생들 목록
+SELECT * 
+    FROM STUDENT
+    WHERE MAJOR = '화학';
+
+
+    
+--조건절을 사용할 때는 컬럼의 타입으로 비교할 값을 지정한다.
+--값을 컬럼의 타입과 다른 타입으로 잡을 경우
+--컬럼의 모든 데이터가 값의 타입으로 변경된 다음 비교를 하게 된다.
+--데이터가 많아질 경우 모든 데이터에서 한번씩 형변환이 일어나기 때문에
+--쿼리 속도가 매우 저하된다.
+SELECT *
+    FROM EMP
+    WHERE SAL >= 3000;
+    
+--조건절에서 비교할 때 컬럼의 타입을 변환하는 일이 있어서는 안된다.
+--비교할 값을 컬럼의 타입과 맞춰주셔야 한다.
+--SELECT *
+--    FROM table
+--    WHERE TO_CHAR(DATE) = '비교할 값'; -- 이렇게 원본데이터를 변환해서는 안된다! 비교할 값을 맞춘다.
+    
+
+--COMM이 null 직원 목록 조회
+SELECT *
+    FROM EMP
+    WHERE COMM IS NULL;
+
+    
