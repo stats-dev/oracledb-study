@@ -1,29 +1,29 @@
---1. »ç¿ëÀÚ ±ÇÇÑ »èÁ¦
+--1. ì‚¬ìš©ìž ê¶Œí•œ ì‚­ì œí•´ë³´ê¸°
 REVOKE DBA FROM C##USERNAME;
 GRANT DBA TO C##USERNAME;
 
 
---2. »ç¿ëÀÚ ¹× ±ÇÇÑ È®ÀÎ //
+--2. ì‚¬ìš©ìž ë° ê¶Œí•œ í™•ì¸ //
 SELECT * FROM DBA_ROLE_PRIVS
 WHERE GRANTEE = 'C##USERNAME';
 
---3. »ç¿ëÀÚ »ý¼º
-CREATE USER C##USERNAME IDENTIFIED BY "password"; -- C##À» ºÙ¿©Áà¾ß ½ÇÇàÀÌ µË´Ï´Ù.
+--3. ì‚¬ìš©ìž ìƒì„±
+CREATE USER C##USERNAME IDENTIFIED BY "password"; -- C##ì„ ë¶™ì—¬ì¤˜ì•¼ ì‹¤í–‰ì´ ë©ë‹ˆë‹¤.
 
---4. CREATE SESSION : DB Á¢¼Ó ½Ã ÇØ´ç »ç¿ëÀÚ°¡ DB¿¡ ´ëÇÑ Á¢¼Ó¼¼¼ÇÀ» ¸¸µé ¼ö ÀÖ´Â ±ÇÇÑ
--- CONNECT ±ÇÇÑÀ» Áà¼­ DB Á¢¼Ó ¼¼¼ÇÀ» ¸¸µé ¼ö ÀÖµµ·Ï ÇÑ´Ù.
+--4. CREATE SESSION : DB ì ‘ì† ì‹œ í•´ë‹¹ ì‚¬ìš©ìžê°€ DBì— ëŒ€í•œ ì ‘ì†ì„¸ì…˜ì„ ë§Œë“¤ ìˆ˜ ìžˆëŠ” ê¶Œí•œ
+-- CONNECT ê¶Œí•œì„ ì¤˜ì„œ DB ì ‘ì† ì„¸ì…˜ì„ ë§Œë“¤ ìˆ˜ ìžˆë„ë¡ í•œë‹¤.
 GRANT connect TO C##USERNAME;
 
 
---5. »ç¿ëÀÚ ±ÇÇÑ È®ÀÎ
+--5. ì‚¬ìš©ìž ê¶Œí•œ í™•ì¸
 SELECT * FROM DBA_SYS_PRIVS
 WHERE GRANTEE = 'C##USERNAME';
  
  
---4. CONNECT°¡ ¾î¶°ÇÑ ±ÇÇÑÀ» °¡Áö°í ÀÖ´ÂÁö È®ÀÎ
+--4. CONNECTê°€ ì–´ë– í•œ ê¶Œí•œì„ ê°€ì§€ê³  ìžˆëŠ”ì§€ í™•ì¸
 SELECT * FROM ROLE_SYS_PRIVS
 WHERE ROLE = 'C##USERNAME';
 
---5. »ç¿ëÀÚ »èÁ¦ ¸í·É¾î
+--5. ì‚¬ìš©ìž ì‚­ì œ ëª…ë ¹ì–´
 DROP USER C##USERNAME;
  

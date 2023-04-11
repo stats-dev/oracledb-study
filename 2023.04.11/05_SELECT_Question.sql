@@ -1,58 +1,59 @@
---WHERE Á¶°ÇÀý »ç¿ë¤±
---1) È­ÇÐ°ú ÇÐ»ýÀ» °Ë»öÇÏ¶ó
+--WHERE ì¡°ê±´ì ˆ ì‚¬ìš©!
+--1) í™”í•™ê³¼ í•™ìƒì„ ê²€ìƒ‰í•˜ë¼
 SELECT *
     FROM STUDENT
-    WHERE MAJOR = 'È­ÇÐ';
+    WHERE MAJOR = 'í™”í•™';
 
---2) ÆòÁ¡ÀÌ 2.0 ¹Ì¸¸ÀÎ ÇÐ»ýÀ» °Ë»öÇÏ¶ó
+--2) í‰ì ì´ 2.0 ë¯¸ë§Œì¸ í•™ìƒì„ ê²€ìƒ‰í•˜ë¼
 SELECT SNAME, AVR
     FROM STUDENT
     WHERE AVR < 2.0;
 
---3) °ü¿ì ÇÐ»ýÀÇ ÆòÁ¡À» °Ë»öÇÏ¶ó
+--3) ê´€ìš° í•™ìƒì˜ í‰ì ì„ ê²€ìƒ‰í•˜ë¼
 SELECT SNAME, AVR
     FROM STUDENT
-    WHERE SNAME = '°ü¿ì';
+    WHERE SNAME = 'ê´€ìš°';
 
---4) Á¤±³¼ö ¸í´ÜÀ» °Ë»öÇÏ¶ó
+--4) ì •êµìˆ˜ ëª…ë‹¨ì„ ê²€ìƒ‰í•˜ë¼
 SELECT PNAME, ORDERS
     FROM PROFESSOR
-    WHERE ORDERS = 'Á¤±³¼ö';
+    WHERE ORDERS = 'ì •êµìˆ˜';
 
---5) È­ÇÐ°ú ¼Ò¼Ó ±³¼öÀÇ ¸í´ÜÀ» °Ë»öÇÏ¶ó
+--5) í™”í•™ê³¼ ì†Œì† êµìˆ˜ì˜ ëª…ë‹¨ì„ ê²€ìƒ‰í•˜ë¼
 SELECT PNAME, SECTION
     FROM PROFESSOR
-    WHERE SECTION = 'È­ÇÐ';
+    WHERE SECTION = 'í™”í•™';
 
---6) ¼Û°­ ±³¼öÀÇ Á¤º¸¸¦ °Ë»öÇÏ¶ó
+--6) ì†¡ê°• êµìˆ˜ì˜ ì •ë³´ë¥¼ ê²€ìƒ‰í•˜ë¼
 SELECT *
     FROM PROFESSOR
-    WHERE PNAME = '¼Û°­';
+    WHERE PNAME = 'ì†¡ê°•';
 
---7) ÇÐ³âº°·Î È­ÇÐ°ú ÇÐ»ýÀÇ ¼ºÀûÀ» °Ë»öÇÏ¶ó
+--7) í•™ë…„ë³„ë¡œ í™”í•™ê³¼ í•™ìƒì˜ ì„±ì ì„ ê²€ìƒ‰í•˜ë¼
 SELECT *
     FROM STUDENT
-    WHERE MAJOR = 'È­ÇÐ'
+    WHERE MAJOR = 'í™”í•™'
     ORDER BY SYEAR;
     
 
---8) 2000³â ÀÌÀü¿¡ ºÎÀÓÇÑ ±³¼öÀÇ Á¤º¸¸¦ ºÎÀÓÀÏ¼øÀ¸·Î °Ë»öÇÏ¶ó
+--8) 2000ë…„ ì´ì „ì— ë¶€ìž„í•œ êµìˆ˜ì˜ ì •ë³´ë¥¼ ë¶€ìž„ì¼ìˆœìœ¼ë¡œ ê²€ìƒ‰í•˜ë¼
 SELECT PNAME
     , HIREDATE
+    , EXTRACT(YEAR FROM HIREDATE)
     FROM PROFESSOR
     WHERE EXTRACT(YEAR FROM HIREDATE) < 2000
     ORDER BY HIREDATE;
 
 SELECT PNAME
     , HIREDATE
-    , substr(HIREDATE,1,4) as HIREDATE_Year
+    , substr(HIREDATE, 1, 2) as YEAR
     FROM PROFESSOR
-    WHERE substr(HIREDATE,1,4) < 2000
+    WHERE substr(HIREDATE, 1, 2) > 00
     ORDER BY HIREDATE;
 
 
 
---9) ´ã´ç ±³¼ö°¡ ¾ø´Â °ú¸ñÀÇ Á¤º¸¸¦ °Ë»öÇÏ¶ó
+--9) ë‹´ë‹¹ êµìˆ˜ê°€ ì—†ëŠ” ê³¼ëª©ì˜ ì •ë³´ë¥¼ ê²€ìƒ‰í•˜ë¼
 SELECT *
     FROM COURSE
     WHERE PNO IS NULL;

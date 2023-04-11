@@ -1,28 +1,28 @@
---¿¬°á¿¬»êÀÚ
---1) '__ÇÐ°úÀÎ __ÇÐ»ýÀÇ ÇöÀç ÆòÁ¡Àº __ÀÔ´Ï´Ù' ÇüÅÂ·Î ÇÐ»ýÀÇ Á¤º¸¸¦ Ãâ·ÂÇÏ¶ó
-SELECT MAJOR || 'ÇÐ°úÀÎ ' || SNAME || 'ÇÐ»ýÀÇ ÇöÀç ÆòÁ¡Àº ' || AVR || 'ÀÔ´Ï´Ù'
+--ì—°ê²°ì—°ì‚°ìž
+--1) '__í•™ê³¼ì¸ __í•™ìƒì˜ í˜„ìž¬ í‰ì ì€ __ìž…ë‹ˆë‹¤' í˜•íƒœë¡œ í•™ìƒì˜ ì •ë³´ë¥¼ ì¶œë ¥í•˜ë¼!
+SELECT MAJOR || 'í•™ê³¼ì¸ ' || SNAME || 'í•™ìƒì˜ í˜„ìž¬ í‰ì ì€ ' || AVR || 'ìž…ë‹ˆë‹¤'
     FROM STUDENT;
    
 
 
---2) '__°ú¸ñÀº __ÇÐÁ¡ °ú¸ñÀÔ´Ï´Ù.' ÇüÅÂ·Î °ú¸ñÀÇ Á¤º¸¸¦ Ãâ·ÂÇÏ¶ó
-SELECT CNAME || '°ú¸ñÀº ' || ST_NUM || 'ÇÐÁ¡ °ú¸ñÀÔ´Ï´Ù.'
+--2) '__ê³¼ëª©ì€ __í•™ì  ê³¼ëª©ìž…ë‹ˆë‹¤.' í˜•íƒœë¡œ ê³¼ëª©ì˜ ì •ë³´ë¥¼ ì¶œë ¥í•˜ë¼
+SELECT CNAME || 'ê³¼ëª©ì€ ' || ST_NUM || 'í•™ì  ê³¼ëª©ìž…ë‹ˆë‹¤.'
     FROM COURSE;
 
---3) '__±³¼ö´Â __ÇÐ°ú ¼Ò¼ÓÀÔ´Ï´Ù.' ÇüÅÂ·Î ±³¼öÀÇ Á¤º¸¸¦ Ãâ·ÂÇÏ¶ó
-SELECT PNAME || '±³¼ö´Â ' || SECTION || 'ÇÐ°ú ¼Ò¼ÓÀÔ´Ï´Ù.'
+--3) '__êµìˆ˜ëŠ” __í•™ê³¼ ì†Œì†ìž…ë‹ˆë‹¤.' í˜•íƒœë¡œ êµìˆ˜ì˜ ì •ë³´ë¥¼ ì¶œë ¥í•˜ë¼
+SELECT PNAME || 'êµìˆ˜ëŠ” ' || SECTION || 'í•™ê³¼ ì†Œì†ìž…ë‹ˆë‹¤.'
     FROM PROFESSOR;
 
---Áßº¹Á¦°Å ¹®Á¦
---4) ÇÐ±³¿¡´Â ¾î¶² ÇÐ°ú°¡ ÀÖ´ÂÁö °Ë»öÇÑ´Ù(ÇÐ»ý Å×ÀÌºí ±â¹ÝÀ¸·Î °Ë»öÇÑ´Ù)
+--ì¤‘ë³µì œê±° ë¬¸ì œ
+--4) í•™êµì—ëŠ” ì–´ë–¤ í•™ê³¼ê°€ ìžˆëŠ”ì§€ ê²€ìƒ‰í•œë‹¤(í•™ìƒ í…Œì´ë¸” ê¸°ë°˜ìœ¼ë¡œ ê²€ìƒ‰í•œë‹¤)
 SELECT DISTINCT MAJOR
     FROM STUDENT;
 
---5) ÇÐ±³¿¡´Â ¾î¶² ÇÐ°ú°¡ ÀÖ´ÂÁö °Ë»öÇÑ´Ù(±³¼ö Å×ÀÌºí ±â¹ÝÀ¸·Î °Ë»öÇÑ´Ù)
+--5) í•™êµì—ëŠ” ì–´ë–¤ í•™ê³¼ê°€ ìžˆëŠ”ì§€ ê²€ìƒ‰í•œë‹¤(êµìˆ˜ í…Œì´ë¸” ê¸°ë°˜ìœ¼ë¡œ ê²€ìƒ‰í•œë‹¤)
 SELECT DISTINCT SECTION
     FROM PROFESSOR;
 
---6) ±³¼öÀÇ ÁöÀ§´Â ¾î¶² °ÍµéÀÌ ÀÖ´ÂÁö °Ë»öÇÑ´Ù
+--6) êµìˆ˜ì˜ ì§€ìœ„ëŠ” ì–´ë–¤ ê²ƒë“¤ì´ ìžˆëŠ”ì§€ ê²€ìƒ‰í•œë‹¤
 SELECT DISTINCT ORDERS
     FROM PROFESSOR;
 

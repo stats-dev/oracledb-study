@@ -1,37 +1,37 @@
---1)student Å×ÀÌºí ±¸Á¶¸¦ °Ë»öÇØ¶ó
+--1)student í…Œì´ë¸” êµ¬ì¡°ë¥¼ ê²€ìƒ‰í•´ë¼!
 DESC STUDENT;
 
---2)course Å×ÀÌºí ±¸Á¶¸¦ °Ë»öÇØ¶ó
+--2)course í…Œì´ë¸” êµ¬ì¡°ë¥¼ ê²€ìƒ‰í•´ë¼
 DESC COURSE;
 
---3)professor Å×ÀÌºí ±¸Á¶¸¦ °Ë»öÇØ¶ó
+--3)professor í…Œì´ë¸” êµ¬ì¡°ë¥¼ ê²€ìƒ‰í•´ë¼
 DESC PROFESSOR;
 
---4)score Å×ÀÌºí ±¸Á¶¸¦ °Ë»öÇØ¶ó
+--4)score í…Œì´ë¸” êµ¬ì¡°ë¥¼ ê²€ìƒ‰í•´ë¼
 DESC SCORE;
 
---5) ¸ðµç ÇÐ»ýÀÇ Á¤º¸¸¦ °Ë»öÇØ¶ó
+--5) ëª¨ë“  í•™ìƒì˜ ì •ë³´ë¥¼ ê²€ìƒ‰í•´ë¼
 SELECT *
     FROM STUDENT;
 
---7) ¸ðµç °ú¸ñÀÇ Á¤º¸¸¦ °Ë»öÇØ¶ó
+--7) ëª¨ë“  ê³¼ëª©ì˜ ì •ë³´ë¥¼ ê²€ìƒ‰í•´ë¼
 SELECT *
     FROM COURSE;
 
---8) ±â¸»°í»ç ½ÃÇèÁ¡¼ö¸¦ °Ë»öÇØ¶ó
+--8) ê¸°ë§ê³ ì‚¬ ì‹œí—˜ì ìˆ˜ë¥¼ ê²€ìƒ‰í•´ë¼
 SELECT RESULT
     FROM SCORE;
 
---9) ÇÐ»ýµéÀÇ ÇÐ°ú¿Í ÇÐ³âÀ» °Ë»öÇØ¶ó
+--9) í•™ìƒë“¤ì˜ í•™ê³¼ì™€ í•™ë…„ì„ ê²€ìƒ‰í•´ë¼
 SELECT MAJOR
     ,SYEAR
     FROM STUDENT;
 
---10) °¢ °ú¸ñÀÇ ÀÌ¸§°ú ÇÐÁ¡À» °Ë»öÇØ¶ó
+--10) ê° ê³¼ëª©ì˜ ì´ë¦„ê³¼ í•™ì ì„ ê²€ìƒ‰í•´ë¼
 SELECT CNAME
     , ST_NUM
     FROM COURSE;
 
---11) ¸ðµç ±³¼öÀÇ Á÷À§¸¦ °Ë»öÇØ¶ó
+--11) ëª¨ë“  êµìˆ˜ì˜ ì§ìœ„ë¥¼ ê²€ìƒ‰í•´ë¼
 SELECT ORDERS
     FROM PROFESSOR;
