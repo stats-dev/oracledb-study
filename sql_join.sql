@@ -281,31 +281,31 @@ SELECT SC.SNO
     ORDER BY SNO, CNO;
 
 
--- 서브쿼리
-SELECT SC.SNO
-    , ST.SNAME
-    , SC.CNO
-    , CS.CNAME
-    , SC.RESULT
-    , SG.GRADE
-    , PCS.PNO
-    , PCS.PNAME
-    FROM (
-        FROM SCORE SC
-    RIGHT JOIN (
-        SELECT CS.*
-            , P.PNAME
-            FROM COURSE CS
-            LEFT JOIN PROFESSOR P
-            ON CS.PNO = P.PNO
-        ) PCS
-    ON SC.CNO = PCS.CNO
-    JOIN PROFESSOR P
-    ON CS.PNO = P.PNO
-    JOIN SCGRADE SG
-    ON SC.RESULT BETWEEN SG.LOSCORE AND SG.HISCORE
-    JOIN STUDENT ST
-    ON SC.SNO = ST.SNO
-    ORDER BY SNO, CNO;
+---- 서브쿼리(나중에 질문하기)
+--SELECT SC.SNO
+--    , ST.SNAME
+--    , SC.CNO
+--    , CS.CNAME
+--    , SC.RESULT
+--    , SG.GRADE
+--    , PCS.PNO
+--    , PCS.PNAME
+--    FROM (
+--        FROM SCORE SC
+--    RIGHT JOIN (
+--        SELECT CS.*
+--            , P.PNAME
+--            FROM COURSE CS
+--            LEFT JOIN PROFESSOR P
+--            ON CS.PNO = P.PNO
+--        ) PCS
+--    ON SC.CNO = PCS.CNO
+--    JOIN PROFESSOR P
+--    ON CS.PNO = P.PNO
+--    JOIN SCGRADE SG
+--    ON SC.RESULT BETWEEN SG.LOSCORE AND SG.HISCORE
+--    JOIN STUDENT ST
+--    ON SC.SNO = ST.SNO
+--    ORDER BY SNO, CNO;
 
 
