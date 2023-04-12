@@ -22,13 +22,17 @@ SELECT *
 SELECT RESULT
     FROM SCORE;
 
+-- 조회할때는 PKO를 함께 넣어주어야 올바르게 출력이 가능하다! 기억!
 --9) 학생들의 학과와 학년을 검색해라
-SELECT MAJOR
-    ,SYEAR
+SELECT SNO
+    , SNMAE
+    , MAJOR
+    , SYEAR
     FROM STUDENT;
 
 --10) 각 과목의 이름과 학점을 검색해라
-SELECT CNAME
+SELECT CNO
+    , CNAME
     , ST_NUM
     FROM COURSE;
 

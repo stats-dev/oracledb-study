@@ -1,7 +1,8 @@
 --ORDER BY
 --1) 성적순으로 학생의 이름을 검색하라!
-SELECT AVR
+SELECT SNO --항상 PKO인 SNO를 적어줘야 한다!!
     , SNAME
+    , AVR
     FROM STUDENT
     ORDER BY AVR DESC;
 

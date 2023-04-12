@@ -19,7 +19,7 @@ SELECT DISTINCT MAJOR
     FROM STUDENT;
 
 --5) 학교에는 어떤 학과가 있는지 검색한다(교수 테이블 기반으로 검색한다)
-SELECT DISTINCT SECTION
+SELECT DISTINCT SECTION --DISTINCT로 중복을 제거한다.
     FROM PROFESSOR;
 
 --6) 교수의 지위는 어떤 것들이 있는지 검색한다

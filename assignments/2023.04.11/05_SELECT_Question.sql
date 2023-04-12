@@ -5,7 +5,7 @@ SELECT *
     WHERE MAJOR = '화학';
 
 --2) 평점이 2.0 미만인 학생을 검색하라
-SELECT SNAME, AVR
+SELECT *
     FROM STUDENT
     WHERE AVR < 2.0;
 
@@ -37,6 +37,17 @@ SELECT *
     
 
 --8) 2000년 이전에 부임한 교수의 정보를 부임일순으로 검색하라
+SELECT *
+    FROM PROFESSOR
+    WHERE HIREDATE < TO_DATE('00/01/01')
+--    WHERE HIREDATE < TO_DATE('20000101 00:00:00')
+    --앞의 문자열을 뒤 형식의 데이트 타입으로 변환
+--    WHERE HIREDATE < TO_DATE('20000101 00:00:00', 'yyyyMMdd HH24:mi:ss')
+    ORDER BY HIREDATE;
+
+
+
+--데이터가 많아지면 문자열로 반환하는데 시간이 많이 걸린다.
 SELECT PNAME
     , HIREDATE
     , EXTRACT(YEAR FROM HIREDATE)

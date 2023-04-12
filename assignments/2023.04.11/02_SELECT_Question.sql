@@ -19,6 +19,7 @@ SELECT SAL
 --5) 현재 학생의 평균 평점은 4.0만점이다. 이를 4.5만점으로 환산해서 검색하라(별칭을 사용)
 SELECT AVR
     , ROUND((AVR / 4) * 4.5, 2) AS "4.5학점"
+    , ROUND(AVR * (4.5/4), 2) AS "환산학점"
     FROM STUDENT;
 
 
