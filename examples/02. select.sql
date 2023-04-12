@@ -273,12 +273,22 @@ SELECT A.* --A가 조회하는 테이블로 기준이됨.
 
 
 
+SELECT A.* --A가 조회하는 테이블로 기준이됨.
+    , B.PNAME
+    FROM COURSE A
+--    INNER JOIN PROFESSOR B
+    LEFT OUTER JOIN PROFESSOR B 
+    ON A.PNO = B.PNO;
+        
 
 
 
 
 
-
+--UPDATE COURSE
+--    SET PNO = NULL
+--    WHERE CNO IN (2369, 2370, 2371);
+--SELECT * FROM COURSE;
 
 
 

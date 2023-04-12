@@ -110,7 +110,57 @@ SELECT EM.*
     FROM EMP EM
     INNER JOIN SALGRADE GR
     ON EM.SAL BETWEEN GR.LOSAL AND GR.HISAL;
+
+SELECT EMP.*
+    , SALGRADE.GRADE
+    FROM EMP
+    INNER JOIN SALGRADE
+    ON EMP.SAL BETWEEN SALGRADE.LOSAL AND SALGRADE.HISAL;
     
     
+--CrossJoin
+--조인 조건을 명시하지 않으면 의미없는 데이터가 조회된다.
+--모든 부서마다 모든 사원 출력하는 것으로 나타남.
+SELECT A.ENO
+    , A.ENAME
+    , A.DNO
+    , B.DNAME
+    FROM EMP A
+        , DEPT B; --조인조건을 명시하지 않으면 이상해짐. 1:1로만 들어감
+
     
+--셀프조인
+--FROM절의 테이블과 조인되는 테이블이 같을 때
+--사원의 사수 이름 조회
+SELECT A.ENO
+    , A.ENAME
+    , A.MGR
+    , B.ENO
+    , B.ENAME
+    FROM EMP A
+    JOIN EMP B
+    ON A.MGR = B.ENO;
     
+
+--3. OUTER JOIN
+--사원의 사수 이름 조회 사수의 정보가 존재하지 않는 사원들도 모두 조회
+--ANSI
+SELECT A.ENO
+    , A.ENAME
+    , A.MGR
+    , B.ENO
+    , B.ENAME
+    FROM EMP A
+    LEFT JOIN EMP B --outer 생략 가능
+    ON A.MGR = B.ENO;
+
+--ORACLE
+SELECT A.ENO
+    , A.ENAME
+    , A.MGR
+    , B.ENO
+    , B.ENAME
+    FROM EMP A
+       , EMP B
+    WHERE A.MGR = B.ENO(+);
+
