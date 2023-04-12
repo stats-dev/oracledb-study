@@ -164,3 +164,32 @@ SELECT A.ENO
        , EMP B
     WHERE A.MGR = B.ENO(+);
 
+
+
+--과목들의 정보를 조회, 교수의 이름과 같이 조회, 담당교수가 배정되지 않은 과목도 함께 조회되도록 한다.
+SELECT A.CNO
+    , A.CNAME
+    , A.ST_NUM
+    , A.PNO
+    , B.PNAME
+    FROM COURSE A
+    LEFT JOIN PROFESSOR B
+    ON A.PNO = B.PNO;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
