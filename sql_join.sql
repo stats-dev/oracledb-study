@@ -177,19 +177,134 @@ SELECT A.CNO
     ON A.PNO = B.PNO;
 
 
+--ANSI
+SELECT C.*
+    , P.PNAME
+    FROM COURSE C
+    LEFT JOIN PROFESSOR P
+    ON C.PNO = P.PNO;
+
+--ORACLE
+SELECT C.*
+    , P.PNAME
+    FROM COURSE C
+        , PROFESSOR P
+        WHERE C.PNO = P.PNO(+);
+        
+        
+--4. 다중 조인
+--사원의 모든정보 조회, 급여등급과 부서명이 같이 조회되도록 한다.
+SELECT E.ENO
+    , E.ENAME --쪼개서 보여주기
+    , E.MGR
+    , E.SAL
+    , S.GRADE
+    , E.ENO
+    , D.DNAME
+    FROM EMP E
+    JOIN SALGRADE S
+    ON E.SAL BETWEEN S.LOSAL AND S.HISAL
+    JOIN DEPT D
+    ON E.DNO = D.DNO;
+    
 
 
+--사원의 모든정보 조회, 급여등급과 부서명이 같이 조회되도록 한다.
+SELECT E.ENO
+    , E.ENAME --쪼개서 보여주기
+    , E.MGR
+    , D.ENAME
+    , E.SAL
+    , S.GRADE
+    , E.ENO
+    , D.DNAME
+    FROM EMP E
+    JOIN SALGRADE S
+    ON E.SAL BETWEEN S.LOSAL AND S.HISAL
+    JOIN DEPT D
+    ON E.DNO = D.DNO
+    LEFT JOIN EMP M
+    ON E.MGR = M.ENO;
+    
+--기말고사의 성적을 조회할 건데 과목이름, 담당교수 이름 함께 조회 과목번호 순서로 정렬
+--학생이름이랑 GRADE까지 출력시킨다.
+SELECT SC.SNO
+    , SC.CNO
+    , SC.RESULT
+    , C.CNAME
+    , P.PNAME
+    FROM SCORE SC
+    INNER JOIN COURSE C
+    ON SC.CNO = C.CNO
+    INNER JOIN PROFESSOR P
+    ON C.PNO = P.PNO
+    ORDER BY CNO;
+    
+--기말고사의 성적을 조회할 건데 과목이름, 담당교수 이름, 학생이름, 점수등급 함께 조회 과목번호 순서로 정렬
+SELECT SC.SNO
+    , SC.CNO
+    , SC.RESULT
+    , C.CNAME
+    , P.PNAME
+    , S.SNAME
+    , GR.GRADE
+    FROM SCORE SC
+    INNER JOIN COURSE C
+    ON SC.CNO = C.CNO
+    INNER JOIN PROFESSOR P
+    ON C.PNO = P.PNO
+    INNER JOIN STUDENT S
+    ON SC.SNO = S.SNO
+    INNER JOIN SCGRADE GR
+    ON SC.RESULT BETWEEN GR.LOSCORE AND GR.HISCORE
+    ORDER BY CNO;
 
 
+--기말고사의 성적을 조회할 건데 과목이름, 담당교수 이름, 학생이름, 점수등급 함께 조회 과목번호 순서로 정렬
+SELECT SC.SNO
+    , ST.SNAME
+    , SC.CNO
+    , CS.CNAME
+    , SC.RESULT
+    , SG.GRADE
+    , CS.PNO
+    , P.PNAME
+    FROM SCORE SC
+    JOIN COURSE CS
+    ON SC.CNO = CS.CNO
+    JOIN PROFESSOR P
+    ON CS.PNO = P.PNO
+    JOIN SCGRADE SG
+    ON SC.RESULT BETWEEN SG.LOSCORE AND SG.HISCORE
+    JOIN STUDENT ST
+    ON SC.SNO = ST.SNO
+    ORDER BY SNO, CNO;
 
 
-
-
-
-
-
-
-
-
+-- 서브쿼리
+SELECT SC.SNO
+    , ST.SNAME
+    , SC.CNO
+    , CS.CNAME
+    , SC.RESULT
+    , SG.GRADE
+    , PCS.PNO
+    , PCS.PNAME
+    FROM SCORE SC
+    RIGHT JOIN (
+        SELECT CS.*
+            , P.PNAME
+            FROM COURSE CS
+            LEFT JOIN PROFESSOR P
+            ON CS.PNO = P.PNO
+        ) PCS
+    ON SC.CNO = PCS.CNO
+    JOIN PROFESSOR P
+    ON CS.PNO = P.PNO
+    JOIN SCGRADE SG
+    ON SC.RESULT BETWEEN SG.LOSCORE AND SG.HISCORE
+    JOIN STUDENT ST
+    ON SC.SNO = ST.SNO
+    ORDER BY SNO, CNO;
 
 
