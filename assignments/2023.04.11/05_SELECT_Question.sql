@@ -39,8 +39,8 @@ SELECT *
 --8) 2000년 이전에 부임한 교수의 정보를 부임일순으로 검색하라
 SELECT *
     FROM PROFESSOR
-    WHERE HIREDATE < TO_DATE('00/01/01')
---    WHERE HIREDATE < TO_DATE('20000101 00:00:00')
+--    WHERE HIREDATE < TO_DATE('00/01/01')
+    WHERE HIREDATE < TO_DATE('20000101 00:00:00')
     --앞의 문자열을 뒤 형식의 데이트 타입으로 변환
 --    WHERE HIREDATE < TO_DATE('20000101 00:00:00', 'yyyyMMdd HH24:mi:ss')
     ORDER BY HIREDATE;

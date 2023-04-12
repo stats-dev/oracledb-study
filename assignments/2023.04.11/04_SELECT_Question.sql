@@ -10,22 +10,25 @@ SELECT SNO --항상 PKO인 SNO를 적어줘야 한다!!
 --2) 학과별 성적순으로 학생의 정보를 검색하라
 SELECT *
     FROM STUDENT
-    ORDER BY MAJOR, AVR DESC;
+    ORDER BY MAJOR, AVR DESC; --MAJOR 오름차순, AVR 내림차순
 
 --3) 학년별 성적순으로 학생의 정보를 검색하라
-SELECT *
+SELECT SNO
+    , SNAME
+    , SYEAR
+    , AVR
     FROM STUDENT
     ORDER BY SYEAR, AVR DESC;
 
 --4) 학과별 학년별로 학생의 정보를 성적순으로 검색하라
 SELECT *
     FROM STUDENT
-    ORDER BY MAJOR, SYEAR, AVR DESC;
+    ORDER BY MAJOR, SYEAR, AVR DESC; --학과 > 학년 > 평점 순 정렬
 
 --5) 학점순으로 과목 이름을 검색하라
 SELECT CNAME
     FROM COURSE
-    ORDER BY ST_NUM DESC;
+    ORDER BY ST_NUM, CNO;
 
 --6) 각 학과별로 교수의 정보를 검색하라
 SELECT *
@@ -40,5 +43,5 @@ SELECT *
 --8) 각 학과별로 교수의 정보를 부임일자 순으로 검색하라
 SELECT *
     FROM PROFESSOR
-    ORDER BY SECTION, HIREDATE ASC;
+    ORDER BY SECTION, HIREDATE;
 
