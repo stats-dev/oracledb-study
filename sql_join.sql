@@ -1,4 +1,4 @@
---1. OUTER JOIN
+--1. OUTER JOIN 연습
 CREATE TABLE BOARD(
     BOARD_NO NUMBER,
     BOARD_TITLE VARCHAR(50)
@@ -46,3 +46,21 @@ SELECT NVL(A.BOARD_TITLE, 'no file exist') BOARD_TITLE
 --    RIGHT OUTER JOIN BOARD_FILE B
     FULL OUTER JOIN BOARD_FILE B
     ON A.BOARD_NO = B.BOARD_NO;
+    
+
+--2. INNER JOIN
+--SCORE 테이블의 모든 데이터와 STUDENT 테이블의 학생이름 조회
+SELECT SC.*
+    , ST.SNAME
+    FROM SCORE SC
+    INNER JOIN STUDENT ST
+    ON SC.SNO = ST.SNO; -- 조건확인
+    
+    
+--모든 사원정보와 부서명 동시에 조회
+SELECT EP.*
+    , DP.DNAME
+    FROM EMP EP
+    INNER JOIN DEPT DP
+    ON EP.DNO = DP.DNO;
+    
