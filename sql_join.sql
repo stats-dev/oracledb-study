@@ -58,9 +58,59 @@ SELECT SC.*
     
     
 --모든 사원정보와 부서명 동시에 조회
-SELECT EP.*
-    , DP.DNAME
-    FROM EMP EP
-    INNER JOIN DEPT DP
-    ON EP.DNO = DP.DNO;
+--SELECT EP.* --모든 사원정보
+--    , DP.DNAME -- 부서명
+--    FROM EMP EP
+----    INNER JOIN DEPT DP
+----    LEFT OUTER JOIN DEPT DP
+--    FULL OUTER JOIN DEPT DP
+--    ON EP.DNO = DP.DNO;
+--    
+
+--모든 사원정보와 부서명 동시에 조회
+--ANSI 표준 작성 요망.
+SELECT EM.*
+    , DE.DNAME
+    , DE.LOC
+    FROM EMP EM
+    JOIN DEPT DE -- INNER는 생략이 가능하다.
+    ON EM.DNO = DE.DNO;
+    
+    
+--다른 형태의 INNER JOIN
+--JOIN과 ON을 없애고, FROM에 다 넣고, WHERE에 ON 조건을 넣는다.
+SELECT EM.*
+    , DE.DNAME
+    , DE.LOC
+    FROM EMP EM
+        , DEPT DE
+    WHERE EM.DNO = DE.DNO;
+
+
+-- 오라클만 가능한 방식 FULL OUTER는 안된다.
+--SELECT EM.*
+--    , DE.DNAME
+--    , DE.LOC
+--    FROM EMP EM
+--        , DEPT DE
+--    WHERE EM.DNO = DE.DNO(+);
+
+--비등가 조인
+--같은 값이 없어서 등가조인이 불가능
+SELECT SC.*
+    , GR.GRADE
+    FROM SCORE SC
+    INNER JOIN SCGRADE GR
+    ON SC.RESULT BETWEEN GR.LOSCORE AND GR.HISCORE;
+    
+
+--사원의 모든 정보와 해당 사원에 대한 급여등급 정보 조회
+SELECT EM.*
+    , GR.GRADE
+    FROM EMP EM
+    INNER JOIN SALGRADE GR
+    ON EM.SAL BETWEEN GR.LOSAL AND GR.HISAL;
+    
+    
+    
     
