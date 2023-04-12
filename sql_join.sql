@@ -290,7 +290,8 @@ SELECT SC.SNO
     , SG.GRADE
     , PCS.PNO
     , PCS.PNAME
-    FROM SCORE SC
+    FROM (
+        FROM SCORE SC
     RIGHT JOIN (
         SELECT CS.*
             , P.PNAME

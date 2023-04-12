@@ -34,7 +34,7 @@ SELECT ST.SNO
     WHERE C.CNAME = '유기화학';
     
 
---4) 화학과 학생이 수강하는 과목을 담당하는 교수의 명단을 검색하라
+--***4) 화학과 학생이 수강하는 과목을 담당하는 교수의 명단을 검색하라
 SELECT P.PNO
     , P.PNAME
     , C.CNO
