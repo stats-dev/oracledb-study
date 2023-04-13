@@ -127,3 +127,9 @@ SELECT A.SNO
         ON A.CNO = B.CNO
         ORDER BY B.CNO;
 
+-- 단일 열의 경우, 서브 쿼리에 SELECT에 한열만 잡으면 된다.
+SELECT C.CNO
+    FROM COURSE C
+    LEFT JOIN PROFESSOR P
+    ON C.PNO = P.PNO
+
