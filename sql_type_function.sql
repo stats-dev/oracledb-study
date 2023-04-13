@@ -217,3 +217,24 @@ SELECT NEXT_DAY(SYSDATE, '수요일')
 SELECT LAST_DAY(TO_DATE('20210618', 'yyyyMMdd'))
     FROM DUAL; --2021년 6월의 마지막 날짜를 반환한다!!
     
+    
+    
+--사원들의 입사일과 입사 100일후의 날짜와 10년뒤 날짜 조회
+SELECT ENO
+     , ENAME
+     , HDATE AS 날짜
+     , HDATE + 100 AS 입사100일후날짜
+     , ADD_MONTHS(HDATE, 10*12) AS 입사10년뒤날짜
+    FROM EMP;
+    
+SELECT HDATE
+     , HDATE + 100
+     , ADD_MONTHS(HDATE, 120)
+    FROM EMP;
+    
+--학생이름에 공백을 추가해서 과제를 제공
+UPDATE STUDENT
+    SET SNAME = SNAME || ' ';
+    
+COMMIT; --데이터를 조작하면 반드시 커밋해줘야 됨. 혹은 커밋버튼 눌러야 함.
+    
