@@ -99,3 +99,121 @@ SELECT LPAD(ENAME, 10, '*')  -- 사원명 앞(lead)에 *을 붙여서 총길이�
      , RPAD(ENAME, 10, '*')  -- 사원명 뒤(rear)에 *을 붙여서 총길이를 10으로 만듦.
     FROM EMP;
 
+
+--직원이름을 출력하는데 마지막 글자만 제거해서 출력(SUBSTR, LENGTH)
+SELECT ENAME
+     , SUBSTR(ENAME, 1, LENGTH(ENAME) - 1) --그니까 처음부터 자기이름 - 1개수만큼 출력하면 된다!
+    FROM EMP;
+    
+SELECT SUBSTR(ENAME, 1, LENGTH(ENAME) - 1)
+    FROM EMP;
+    
+    
+--1-3. 문자열 치환 함수
+--TRANSLATE, REPLACE
+SELECT TRANSLATE('World of Warcraft', 'Wo', '--') --문자 단위로 동작하기 때문에 모든 W, o 치환
+     , REPLACE('World of Warcraft', 'Wo', '--') --문자열 단위로 동작하기 때문에 Wo가 치환.
+    FROM DUAL;
+    
+    --TRANSLATE         REPLACE
+    --rld -f -arcraft	--rld of Warcraft
+
+
+--1-4. 숫자 함수
+--ROUND(지정한 자리수까지 반올림)
+SELECT ROUND(123.454678, 3) --소수점 세자리수
+    FROM DUAL; --없으면 DUAL!
+    
+--TRUNC(지정한 자리수 뒤의 숫자 버림)
+SELECT TRUNC(123.454678, 3)
+    FROM DUAL;
+    
+--MOD(나머지 값)
+SELECT MOD(10, 4)
+    FROM DUAL;
+    
+--POWER(몇 제곱값)
+SELECT POWER(10, 3)
+    FROM DUAL;
+    
+--CEIL, FLOOR(제일 가까운 정수 값)
+SELECT CEIL(2.59)
+     , FLOOR(2.59)
+    FROM DUAL;
+    
+--ABS(절대값)
+SELECT ABS(10)
+     , ABS(-10)
+    FROM DUAL;
+    
+--SQRT(제곱근 값)
+SELECT SQRT(9)
+     , SQRT(25)
+     , SQRT(100)
+    FROM DUAL;
+    
+--SIGN(부호판단) : 음수 -1, 양수 1, 0은 0 반환!  
+SELECT SIGN(-123)
+     , SIGN(52)
+     , SIGN(0)
+    FROM DUAL;
+
+
+--1-4. 날짜 연산
+SELECT SYSDATE
+     , SYSDATE + 100 -- 100일 후의 날짜
+     , SYSDATE - 100 -- 100일 이전의 날짜
+     , SYSDATE + 3 / 24 -- 3시간 후의 날짜
+     , SYSDATE - 5 / 24 -- 5시간 이전의 날짜
+     , SYSDATE - TO_DATE('20220413', 'YYYY/MM/DD') -- 두 날짜간 차이 일수(시간, 분, 초때문에 정확히 나오지 않음)
+     , TRUNC(SYSDATE) - TO_DATE('20220413', 'YYYY/MM/DD')
+    FROM DUAL;
+    
+    
+    
+    --ALTER SESSION SET NLS_DATE_FORMAT = 'yyyyMMDD HH24:mi:ss'
+    
+--1-5. 날짜 함수
+--ROUND
+-- 두 개 이상x, 오직 하나의 단위별로만 가능.
+--SELECT ROUND(SYSDATE, 'MM/DD') -- ORA-01898: 정밀도 지정자가 너무 많습니다
+--    FROM DUAL;
+    
+SELECT ROUND(SYSDATE, 'mm')
+    FROM DUAL;
+    
+SELECT ROUND(SYSDATE, '20230423...')
+    FROM DUAL;
+    
+--TRUNC : 아무것도 지정안하면 날짜 중 시분초가 0으로 초기화된 상태..
+SELECT TRUNC(SYSDATE)
+    FROM DUAL;
+    
+SELECT TRUNC(SYSDATE, 'YYYY') -- 연도까지만 가져오고 다 초기화 시킨다.
+    FROM DUAL;
+    
+--두가지 비교
+SELECT ROUND(SYSDATE, 'dd') --20230414
+    FROM DUAL;
+    
+SELECT TRUNC(SYSDATE, 'dd')  --20230413
+    FROM DUAL;
+    
+    
+--MONTHS_BETWEEN
+SELECT MONTHS_BETWEEN(SYSDATE, TO_DATE('2023/02/13', 'yyyy/MM/dd'))
+    FROM DUAL;
+    
+    
+--ADD_MONTHS
+SELECT ADD_MONTHS(SYSDATE, 3) -- 3개월 후 날짜 반환
+    FROM DUAL;
+    
+--NEXT_DAY
+SELECT NEXT_DAY(SYSDATE, '수요일')
+    FROM DUAL; --제일 처음 다음으로 만나는 수요일
+
+--LAST_DAY
+SELECT LAST_DAY(TO_DATE('20210618', 'yyyyMMdd'))
+    FROM DUAL; --2021년 6월의 마지막 날짜를 반환한다!!
+    
