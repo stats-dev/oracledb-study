@@ -141,7 +141,80 @@ SELECT C.CNO
     FROM EMP;            
     
     
+--1-9. 조건 처리해주는 CASE~WHEN
+ SELECT ENO
+     , ENAME
+     , JOB
+     , SAL
+     , CASE JOB
+            WHEN '개발' THEN SAL * 1.5 --업무가 개발인 사람들
+            WHEN '경영' THEN SAL * 1.3 --업무가 개발이 아닌 사람들 중 업무가 경영인 사람들
+            WHEN '지원' THEN SAL * 1.1 --업무가 개발, 경영이 아닌 사람들 중 업무가 ERP인 사람들
+            WHEN '분석' THEN SAL       --업무가 개발, 경영, ERP가 아닌 사람들 중 업무가 분석인 사람들
+            ELSE SAL * 0.95 --업무가 개발, 경영, ERP, 분석이 아닌 사람들
+                END AS CHANGE_SAL
+    FROM EMP;            
+
+--CASE~WHEN은 COMMA가 없다.
+SELECT ENO
+     , ENAME
+     , JOB
+     , SAL
+     , CASE JOB
+        WHEN '개발' THEN SAL * 1.5 --업무가 개발인 사람들
+        WHEN '경영' THEN SAL * 1.3 --업무가 개발이 아닌 사람들 중 업무가 경영인 사람들
+        WHEN '지원' THEN SAL * 1.1 --업무가 개발, 경영이 아닌 사람들 중 업무가 ERP인 사람들
+        WHEN '분석' THEN SAL       --업무가 개발, 경영, ERP가 아닌 사람들 중 업무가 분석인 사람들
+        ELSE SAL * 0.95           --업무가 개발, 경영, ERP, 분석이 아닌 사람들
+       END AS CHANGE_SAL --END로 CASE문의 종결을 알림, 별칭을 붙여줌
+    FROM EMP;            
+
+
     
+--COMM이 NULL인 사람은 '해당사항 없음', COMM이 0인 사람은 '보너스 없음', 나머지 사람들은 '보너스 : " || COMM
+--COMM_TXT, ENO, ENAME, COMM 조회
+--재밌게도 여기서는 CASE 뒤에 컬럼명 안넣고 바로 WHEN에서 컬럼이랑 다 처리함.
+--CASE ~ WHEN
+SELECT ENO
+     , ENAME
+     , COMM
+     , CASE 
+        WHEN COMM IS NULL THEN '해당사항 없음'
+        WHEN COMM = 0 THEN '보너스 없음'
+        ELSE '보너스 : ' || COMM
+      END AS COMM_TXT
+    FROM EMP;
     
+SELECT ENO
+     , ENAME
+     , COMM
+     , CASE NVL(COMM, -1)
+        WHEN -1 THEN '해당사항 없음'
+        WHEN 0 THEN '보너스 없음'
+        ELSE '보너스 : ' || COMM
+      END AS COMM_TXT
+    FROM EMP;
+
+
+--DECODE
+SELECT ENO
+     , ENAME
+     , COMM
+    , DECODE(COMM,
+        null, '해당사항 없음',
+        0, '보너스 없음',
+        '보너스 : ' || COMM
+        ) AS COMM_TXT
+    FROM EMP;
+
+SELECT ENO
+     , ENAME
+     , COMM
+    , DECODE(NVL(COMM, -1),
+        -1, '해당사항 없음',
+        0, '보너스 없음',
+        '보너스 : ' || COMM
+        ) AS COMM_TXT
+    FROM EMP;
     
-    
+
