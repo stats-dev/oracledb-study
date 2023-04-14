@@ -175,33 +175,59 @@ SELECT ENO
 --COMM_TXT, ENO, ENAME, COMM 조회
 --재밌게도 여기서는 CASE 뒤에 컬럼명 안넣고 바로 WHEN에서 컬럼이랑 다 처리함.
 --CASE ~ WHEN
+    --CASE는 NULL을 바로 처리하지 못한다!!!
+SELECT ENO
+     , ENAME
+     , COMM
+     , CASE NVL(COMM, -1) 
+        WHEN 0 THEN '보너스 없음'
+        WHEN -1 THEN '해당사항 없음'
+--        ELSE COMM --에러 난다. 규격이 안맞음.
+--        ELSE '보너스 : ' || COMM
+        ELSE TO_CHAR(COMM)
+    END AS COMM_TXT
+    FROM EMP;
+
+
 SELECT ENO
      , ENAME
      , COMM
      , CASE 
-        WHEN COMM IS NULL THEN '해당사항 없음'
         WHEN COMM = 0 THEN '보너스 없음'
+        WHEN COMM IS NULL THEN '해당사항 없음'
         ELSE '보너스 : ' || COMM
       END AS COMM_TXT
     FROM EMP;
     
-SELECT ENO
-     , ENAME
-     , COMM
-     , CASE NVL(COMM, -1)
-        WHEN -1 THEN '해당사항 없음'
-        WHEN 0 THEN '보너스 없음'
-        ELSE '보너스 : ' || COMM
-      END AS COMM_TXT
-    FROM EMP;
 
 
 --DECODE
 SELECT ENO
      , ENAME
      , COMM
+     , DECODE(NVL(COMM, -1),
+        0, '보너스 없음',
+        -1, '해당사항 없음',
+        '보너스' || COMM) AS COMM_TXT
+    FROM EMP;
+    
+    --DECODE는 NULL 처리가 된다.    
+SELECT ENO
+     , ENAME
+     , COMM
+     , DECODE(COMM,
+--     COMM IS NULL --이렇게는 안된다. 반드시 값으로 비교가 이루어져야 한다. TRUE/FALSE 조건문 불가
+        0, '보너스 없음',
+        NULL, '해당사항 없음',
+        '보너스' || COMM) AS COMM_TXT
+    FROM EMP;
+    
+    
+SELECT ENO
+     , ENAME
+     , COMM
     , DECODE(COMM,
-        null, '해당사항 없음',
+        NULL, '해당사항 없음',
         0, '보너스 없음',
         '보너스 : ' || COMM
         ) AS COMM_TXT
