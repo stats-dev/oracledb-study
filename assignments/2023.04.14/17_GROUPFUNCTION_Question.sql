@@ -16,9 +16,9 @@ SELECT COUNT(*)
      , ORDERS
     FROM (
             SELECT ORDERS
-            , HIREDATE
-            FROM PROFESSOR
-            WHERE (MONTHS_BETWEEN(SYSDATE, HIREDATE) / 12) >= 10
+                , HIREDATE
+                FROM PROFESSOR
+                WHERE (MONTHS_BETWEEN(SYSDATE, HIREDATE) / 12) >= 10
             )
     GROUP BY ORDERS;
 

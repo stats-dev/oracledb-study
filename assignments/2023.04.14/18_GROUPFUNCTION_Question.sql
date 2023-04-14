@@ -11,7 +11,7 @@ SELECT ROUND(AVG(AVR), 2)
      , MAJOR
     FROM STUDENT
     GROUP BY MAJOR
-    HAVING MAJOR != '화학' 
+    HAVING MAJOR != '화학'
     AND ROUND(AVG(AVR), 2) >= 2.0;
 
 
@@ -99,15 +99,12 @@ SELECT D.DNO
 
 
 --7) 업무별 평균 연봉이 3000 이상인 업무를 검색하세요
-SELECT D.DNO
-     , D.DNAME
-     , AVG(E.SAL) AS 평균연봉
-    FROM EMP E
-    JOIN DEPT D
-    ON E.DNO = D.DNO
-    GROUP BY D.DNO, D.DNAME
-    HAVING AVG(E.SAL) >= 3000
-    ORDER BY AVG(E.SAL) ASC;
+SELECT ROUND(AVG(SAL),2) AS 평균연봉
+     , JOB
+    FROM EMP
+    GROUP BY JOB
+    HAVING AVG(SAL) >= 3000
+    ORDER BY AVG(SAL) ASC;
 
 --8) 각 학과의 학년별 인원중 인원이 5명 이상인 학년을 검색하세요
 SELECT COUNT(*)
@@ -115,4 +112,5 @@ SELECT COUNT(*)
      , SYEAR
     FROM STUDENT
     GROUP BY MAJOR, SYEAR
-    HAVING COUNT(*) >= 5;
+    HAVING COUNT(*) >= 5
+    ORDER BY MAJOR, SYEAR;
