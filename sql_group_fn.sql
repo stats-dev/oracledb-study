@@ -358,6 +358,9 @@ SELECT *
 
 
 
-
-
-
+--임용년도가 동일한 교수의 수를 조회
+SELECT TO_CHAR(HIREDATE, 'YYYY')
+     , COUNT(*)
+    FROM PROFESSOR
+    GROUP BY TO_CHAR(HIREDATE, 'YYYY')
+    ORDER BY TO_CHAR(HIREDATE, 'YYYY');
