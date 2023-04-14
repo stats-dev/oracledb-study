@@ -128,14 +128,137 @@ SELECT DISTINCT CNO
     FROM SCORE;
 
 
+--GROUP BY 통계함수 함께 사용
+--SELECT절에 통계함수
+--GROUP BY절에 통계함수를 어떤 기준으로 통계를 낼건지
+--GROUP BY절에 특정 컬럼을 지정하면 그 컬럼의 값이 같은 데이터들끼리
+--모아서 통계를 내준다.
+--예로 SCORE 테이블에 CNO을 GROUP BY절에 작성하면
+--CNO이 같은 결국 같은 과목의 데이터만 모아서 통계를 내주는 식으로 진행한다.
+
+
+--1-2. MIN
+--기말고사 성적 전체 과목중 최저 값 조회
+--테이블 전체 데이터의 통계를 낼 때는 GROUP BY를 사용할 필요가 없다.
+SELECT MIN(RESULT)
+    FROM SCORE;
+    
+--부서별 연봉 최저값
+SELECT DNO
+    , MIN(SAL)
+    FROM EMP
+    GROUP BY DNO;
+
+
+--이러면 ENAME 때문에 GROUP의 의미가 없어짐. 다 나온다. 굳이 하려면 별도의 서브쿼리로 잡는다.
+--SELECT DNO
+--     , MIN(SAL)
+--     , ENAME
+--    FROM EMP
+--    GROUP BY DNO, ENAME; 
+    
+    
+--부서별 연봉 최저값 부서명 포함
+SELECT D.DNO
+     , D.DNAME
+     , MINS.MINSAL
+    FROM DEPT D
+    JOIN (
+            SELECT DNO
+                 , MIN(SAL) AS MINSAL
+             FROM EMP
+             GROUP BY DNO
+        ) MINS
+    ON D.DNO = MINS.DNO
+    ORDER BY MINSAL;
+
+
+SELECT MNSL.DNO
+     , D.DNAME
+     , MNSL.MINSAL
+--     , MNSL.MIN(SAL) --이거는 다시 통계내는 것이므로 무조건 별칭으로 수행한다.
+    FROM DEPT D
+    JOIN (
+            SELECT DNO
+            , MIN(SAL) AS MINSAL --요 별칭으로 밖에서 사용해야 합니다!
+            FROM EMP
+            GROUP BY DNO     
+    ) MNSL
+    ON D.DNO = MNSL.DNO;
 
 
 
+--부서별 연봉 최저값 부서명, 사원이름 포함(잘못된 GROUP BY)
+--공통된 값이 없는 컬럼을 GROUP BY하면 그룹화의 의미가 없어진다.
+SELECT MNSL.DNO
+     , D.DNAME
+     , MNSL.ENAME
+     , MNSL.MINSAL
+--     , MNSL.MIN(SAL) --이거는 다시 통계내는 것이므로 무조건 별칭으로 수행한다.
+    FROM DEPT D
+    JOIN (
+            SELECT DNO
+                , ENAME
+                , MIN(SAL) AS MINSAL --요 별칭으로 밖에서 사용해야 합니다!
+                FROM EMP
+                GROUP BY DNO, ENAME
+    ) MNSL
+    ON D.DNO = MNSL.DNO;
 
 
-
-
-
-
-
-
+--
+SELECT MNSL.DNO
+     , D.DNAME
+     , E.ENO
+     , E.ENAME
+     , MNSL.MINSAL
+     FROM (
+                 SELECT DNO
+                , MIN(SAL) AS MINSAL --요 별칭으로 밖에서 사용해야 합니다!
+                FROM EMP
+                GROUP BY DNO
+     ) MNSL --FROM, JOIN 순서 상관없음. 같은 값만 있으면 된다.
+     JOIN EMP E --OUTER JOIN은 순서 중요함.
+     ON E.DNO = MNSL.DNO
+     AND E.SAL = MNSL.MINSAL --급여 중 최소값과 같은 사원을 찾아서 출력
+     JOIN DEPT D
+     ON D.DNO = MNSL.DNO;
+     
+--잘못된 GROUP BY
+--SELECT절에 컬럼이 하나 추가되는 순간 GROUP BY에도 추가해줘야되기 대문에
+--GROUP BY의 의미가 변질된다. 그래서 GROUP BY로 이미 묶여있는 데이터는
+--서브쿼리로 빼서 별도의 테이블로 생각하고 사용한다.     
+    --잘못된 GROUP BY +원본테이블 그대로 가져오게 되는 케이스.
+SELECT SNO
+     , CNO
+     , MAX(RESULT)
+    FROM SCORE
+    GROUP BY SNO, CNO
+    ORDER BY SNO, CNO; --이러면 그냥 원본테이블과 같음.
+    
+    
+--학생별 최대점수
+SELECT SNO
+     , MAX(RESULT) AS MAXRES
+    FROM SCORE
+    GROUP BY SNO;
+    
+    
+--학생별 최대점수의 과목번호
+    --SELECT 절에 컬럼 하나 추가된 순간, 전혀 다른 결과
+    --GROUP BY는 서브쿼리로 넣어 하나로 묶는게 좋습니다,
+SELECT MXRS.SNO
+     , SC.CNO
+     , MXRS.MAXRES
+     FROM ( --학생별 최대점수
+             SELECT SNO
+             , MAX(RESULT) AS MAXRES
+            FROM SCORE
+            GROUP BY SNO
+     ) MXRS
+     JOIN SCORE SC
+     ON MXRS.SNO = SC.SNO
+     AND MXRS.MAXRES = SC.RESULT --이학생이 가진 것 중 최고점수인 과목 번호 나오게함.
+     ORDER BY SNO, CNO;
+     
+     
