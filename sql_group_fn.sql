@@ -261,4 +261,103 @@ SELECT MXRS.SNO
      AND MXRS.MAXRES = SC.RESULT --이학생이 가진 것 중 최고점수인 과목 번호 나오게함.
      ORDER BY SNO, CNO;
      
-     
+--1-3. SUM
+--각 부서별 보너스의 합계
+--COMM에 NULL값이 있는 부서가 존재하기 때문에
+--NVL로 NULL값을 처리한 COMM값으로 합계를 내야 한다.
+SELECT DNO
+     , SUM(COMM)
+    FROM EMP
+    GROUP BY DNO; --COMM이 NULL인 경우와 더해지면, NULL로 나와버린다.
+    
+SELECT DNO
+     , SUM(NVL(COMM,0)) --이렇게 0으로 처리해야함.
+    FROM EMP
+    GROUP BY DNO;
+
+
+--1-4. COUNT
+--각 학과별 학년별 학생수
+SELECT MAJOR
+     , SYEAR
+     , COUNT(*) -- 모든 컬럼의 카운트
+--     , COUNT(SYEAR) -- SYEAR의 카운트 동일
+    FROM STUDENT 
+    GROUP BY MAJOR, SYEAR; --과/전공별, 학생별 학생수가 나타난다.
+
+--학과별 교수의 수
+SELECT SECTION
+     , COUNT(*)
+    FROM PROFESSOR
+    GROUP BY SECTION;
+    
+--1-5. AVG (평균)
+--학과별 평점의 평균
+SELECT AVG(AVR)
+    FROM STUDENT
+    GROUP BY MAJOR;
+    
+--학과별 평점의 최대 평균
+--학과별 평점의 평균을 가져오는 쿼리 만들어진 가상 테이블의 전체 데이터를 사용해서
+--통계를 내는 거니까 별도의 GROUP BY는 필요없다.
+SELECT MAX(AVG(AVR))
+    FROM STUDENT
+    GROUP BY MAJOR;
+    
+--1-6. HAVING절 : GROUP BY절에 명시된 컬럼들에 대한 조건 작성
+--DNO에 10, 20, 30인 부서의 평균 급여
+SELECT DNO
+     , AVG(SAL)
+    FROM EMP
+    GROUP BY DNO
+    HAVING DNO IN ('10','20','30'); --부서번호 102030 평균 연봉 가져온다.
+    
+--GROUP BY에 명시됐거나 통계함수가 아닌 칼럼은 HAVING절에 사용불가
+SELECT DNO
+     , AVG(SAL)
+    FROM EMP
+    GROUP BY DNO
+    HAVING COMM > 600; -- COMM이 GROUP BY에 없고, 통계함수 AVG(SAL)이 아닌 이상 사용 불가하다.
+    
+
+--AND/OR 여러개의 조건을 붙일 수 있다.
+SELECT DNO
+     , AVG(SAL)
+    FROM EMP
+    GROUP BY DNO
+    HAVING DNO IN ('10','20','30')
+    AND AVG(SAL) <= 3000;
+    
+--부서 중 평균급여가 가장 높은 부서번호와 평균급여만 조회(EMP 테이블만 사용)
+--그룹함수에 대한 조건은 WHERE절에서 사용불가
+SELECT DNO
+     , AVG(SAL)
+    FROM EMP
+    GROUP BY DNO
+    HAVING AVG(SAL) = (
+                            SELECT MAX(AVG(SAL))
+                                FROM EMP
+                                GROUP BY DNO
+                        );
+
+--WHERE절에서 그룹함수를 쓰는 방식은 그룹함수를 사용한 쿼리를 서브쿼리로 묶어서 
+--테이블로 만든 다음 사용한다. 별칭을 이용한다.
+SELECT *
+    FROM (
+        SELECT DNO
+         , AVG(SAL) AS AVG_SAL
+        FROM EMP
+        GROUP BY DNO
+    ) AVGSAL
+    WHERE AVGSAL.AVG_SAL = (
+                                SELECT MAX(AVG(SAL))
+                                FROM EMP
+                                GROUP BY DNO
+          
+                            );
+
+
+
+
+
+
