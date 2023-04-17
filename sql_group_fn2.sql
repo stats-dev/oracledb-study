@@ -1,0 +1,218 @@
+--1. 그룹화 관련 함수
+--1-1. ROLLUP
+--ROLLUP 사용 X
+SELECT DNO
+     , JOB
+     , MAX(SAL)
+     , SUM(SAL)
+     , AVG(SAL)
+     , COUNT(*)
+    FROM EMP
+    GROUP BY DNO, JOB;
+    
+--ROLLUP
+--처음에는 그룹화 컬럼 모두에 대한 그룹화 진행
+--다음부터는 그룹화 컬럼에서 마지막에 있는 컬럼을 하나씩 제거하고 그룹화 진행
+--마지막에는 모든 그룹화 컬럼에 대한 그룹화가 진행되지 않은 전체 데이터에 대한 결과
+
+SELECT DNO
+     , JOB
+     , MAX(SAL)
+     , SUM(SAL)
+     , AVG(SAL)
+     , COUNT(*)
+    FROM EMP
+    GROUP BY ROLLUP(DNO, JOB) --GROUP BY 해당 안되는 마지막 칼럼 빼주면서 고대로 출력, 마지막은 그룹화 없이 전체 데이터 대상 결과값 출력.
+    ORDER BY DNO, JOB;
+    
+    
+
+
+--1-2. CUBE
+--CUBE는 ROLLUP과 지정방식이 동일하지만 동작방식이 다르다.
+--그룹화되는 컬럼들의 모든 조합의 그룹화를 진행하여 결과를 출력
+--그룹화 순서는 바뀌지 않는다.
+SELECT DNO
+     , JOB
+     , MAX(SAL)
+     , SUM(SAL)
+     , AVG(SAL)
+     , COUNT(*)
+    FROM EMP
+    GROUP BY CUBE(DNO, JOB)
+    ORDER BY DNO, JOB;
+
+
+--1-3. GROUPING SETS
+--그룹화로 지정된 컬럼들의 각각의 그룹화를 진행한 결과
+SELECT DNO
+     , JOB
+     , MAX(SAL)
+     , SUM(SAL)
+     , AVG(SAL)
+     , COUNT(*)
+    FROM EMP
+    GROUP BY GROUPING SETS(DNO, JOB)
+    ORDER BY DNO, JOB;
+
+
+--1-4. 그룹화 함수
+--GROUPING
+--그룹화 여부 확인
+SELECT DNO
+     , JOB --계속 빠질 때마다 그룹화 풀림. 1로 표기됨.
+     , MAX(SAL)
+     , SUM(SAL)
+     , AVG(SAL)
+     , COUNT(*)
+     , GROUPING(DNO) --DNO, JOB 두 개만 그룹화되었는지 확인해본다.
+     , GROUPING(JOB)
+    FROM EMP
+    GROUP BY ROLLUP(DNO, JOB)
+    ORDER BY DNO, JOB; -- 최종 데이터는 그룹화 없으니 1로 모두 출력.
+    
+    
+    
+
+--GROUPING_ID
+--GROUPING의 결과를 이진수로 인식하여 십진수로 변환한 값을 표시
+SELECT DNO
+     , JOB
+     , MAX(SAL)
+     , SUM(SAL)
+     , AVG(SAL)
+     , COUNT(*)
+     , GROUPING(DNO)
+     , GROUPING(JOB)
+     , GROUPING_ID(DNO, JOB)
+    FROM EMP
+    GROUP BY ROLLUP(DNO, JOB)
+    ORDER BY DNO, JOB; -- 최종 데이터는 그룹화 없으니 1로 모두 출력.
+    
+
+
+--1-5. LISTAGG
+--LISTAGG 사용X
+SELECT DNO
+     , ENAME
+    FROM EMP
+    GROUP BY DNO, EMANEM;
+    
+--LISTAGG사용
+--그룹화된 컬럼에 속한 데이터 확인
+SELECT DNO
+     , LISTAGG(ENAME, ', ')
+       WITHIN GROUP(ORDER BY SAL DESC)
+    FROM EMP
+    GROUP BY DNO;
+    
+
+SELECT JOB
+     , MAX(SAL)
+    FROM EMP
+    GROUP BY JOB;
+    
+    
+    
+--조회되는 행의 데이터를 컬럼으로 사용할 수 있는 PIVOT
+SELECT *
+    FROM (
+            SELECT JOB
+                 , SAL
+                FROM EMP
+    )
+PIVOT(MAX(SAL)
+    FOR JOB IN ('경영' AS OPER,
+                '지원' AS HELP,
+                '개발' AS DEV,
+                '회계' AS ACCOUNT,
+                '분석' AS ANALYS
+                )
+); --ORDER BY는 빼야 한다. 각 컬럼당 하나씩만 나온다. 열 이름만 가져온다.
+
+
+--PIVOT 사용
+SELECT *
+    FROM (
+            SELECT JOB
+                 , DNO --DNO를 추가해서, DNO별로 어떤 업무가 최대값 가질지 뽑아낸다.
+                 , SAL
+                FROM EMP
+    )
+PIVOT(MAX(SAL)
+    FOR JOB IN ('경영' AS OPER,
+                '지원' AS HELP,
+                '개발' AS DEV,
+                '회계' AS ACCOUNT,
+                '분석' AS ANALYS
+                )
+)
+ORDER BY DNO;
+
+
+
+--1-7. UNPIVOT
+--UNPIVOT --열을 행으로 만드는 역할.
+--UNPIVOT 사용 X
+SELECT *
+    FROM (
+            SELECT DNO
+                 , MAX(DECODE(JOB, '경영', SAL)) AS "경영"
+                 , MAX(DECODE(JOB, '지원', SAL)) AS "지원"
+                 , MAX(DECODE(JOB, '회계', SAL)) AS "회계"
+                 , MAX(DECODE(JOB, '개발', SAL)) AS "개발"
+                 , MAX(DECODE(JOB, '분석', SAL)) AS "분석"
+                FROM EMP
+                GROUP BY DNO
+        );               
+
+--DNO 없이 계산
+SELECT *
+    FROM (
+            SELECT MAX(DECODE(JOB, '경영', SAL)) AS "경영"
+                 , MAX(DECODE(JOB, '지원', SAL)) AS "지원"
+                 , MAX(DECODE(JOB, '회계', SAL)) AS "회계"
+                 , MAX(DECODE(JOB, '개발', SAL)) AS "개발"
+                 , MAX(DECODE(JOB, '분석', SAL)) AS "분석"
+                FROM EMP
+        );               
+
+
+
+--UNPIVOT 사용
+SELECT *
+    FROM (
+            SELECT MAX(DECODE(JOB, '경영', SAL)) AS "경영"
+                 , MAX(DECODE(JOB, '지원', SAL)) AS "지원"
+                 , MAX(DECODE(JOB, '회계', SAL)) AS "회계"
+                 , MAX(DECODE(JOB, '개발', SAL)) AS "개발"
+                 , MAX(DECODE(JOB, '분석', SAL)) AS "분석"
+                FROM EMP
+        )
+        
+    UNPIVOT(
+            SAL FOR JOB IN (경영, 지원, 회계, 개발, 분석) --컬럼이라 그냥 컬럼명으로 잡기. 문자열 X
+--            SAL FOR JOB IN ("경영", "지원", "회계", "개발", "분석") --혹은 큰따옴표로 잡아두기.
+    );          
+
+
+
+SELECT *
+    FROM (
+            SELECT DNO
+                 , MAX(DECODE(JOB, '경영', SAL)) AS "경영"
+                 , MAX(DECODE(JOB, '지원', SAL)) AS "지원"
+                 , MAX(DECODE(JOB, '회계', SAL)) AS "회계"
+                 , MAX(DECODE(JOB, '개발', SAL)) AS "개발"
+                 , MAX(DECODE(JOB, '분석', SAL)) AS "분석"
+                FROM EMP
+                GROUP BY DNO
+        )
+        
+    UNPIVOT(
+            SAL FOR JOB IN (경영, 지원, 회계, 개발, 분석) --컬럼이라 그냥 컬럼명으로 잡기. 문자열 X
+--            SAL FOR JOB IN ("경영", "지원", "회계", "개발", "분석") --혹은 큰따옴표로 잡아두기.
+    );           
+
+
+
