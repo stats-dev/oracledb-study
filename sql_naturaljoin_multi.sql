@@ -230,11 +230,40 @@ SELECT JOBDEV.ENO
 --화학과 학생명단(STUDENT TABLE의 컬럼 전체), 
 --기말고사 성적중 과목명에 화학이 포함되는 성적 정보를 가상 테이블로 생성
 --(SCORE의 CNO, SNO, RESULT & COURSE의 CNAME) 
---학생별 화학이 포함된 과목의 기말고사 성적의 평균(학생번호, 학생이름, 평균성적)
+--학생별 화학이 포함된 과목의 기말고사 성적의 평균(학생번호, 학생이름, 평균 기말고사성적)
+WITH 
+    CHEMIST AS (SELECT * FROM STUDENT WHERE MAJOR = '화학'),
+    CHEMISC AS (
+    
+                SELECT CNO
+                     , C.CNAME
+                     , SC.SNO
+                     , SC.RESULT
+                    FROM SCORE SC
+                    NATURAL JOIN COURSE C
+                    WHERE C.CNAME LIKE '%화학%'
+    
+                )
+
+SELECT SNO
+     , CHEMIST.SNAME
+     , ROUND(AVG(CHEMISC.RESULT), 2)
+    FROM CHEMIST
+    NATURAL JOIN CHEMISC --NATURAL JOIN으로 해주는 게 좋겠다.
+    GROUP BY SNO, CHEMIST.SNAME;
+
 
 WITH
     CHEMSTU AS (SELECT * FROM STUDENT WHERE MAJOR = '화학'),
-    CHEMSC AS (SELECT CNO, SC.SNO, SC.RESULT FROM SCORE SC NATURAL JOIN COURSE C WHERE C.CNAME LIKE '%화학%')
+    CHEMSC AS (
+                SELECT CNO
+                     , SC.SNO
+                     , SC.RESULT
+                    FROM SCORE SC 
+                    NATURAL JOIN COURSE C 
+                     WHERE C.CNAME LIKE '%화학%'
+                     
+                )
 SELECT CHEMSTU.SNO 
      , CHEMSTU.SNAME
      , ROUND(AVG(CHEMSC.RESULT), 2)
