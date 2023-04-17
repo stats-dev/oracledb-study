@@ -61,6 +61,19 @@ SELECT CNO
                 HAVING MAX(RESULT) = 100
 );
     
-     
-
+--NO GROUP BY HAVING MAX RESULT METHOD..
+SELECT CNO
+     , C.CNAME
+     , SNO
+     , ST.SNAME
+     , SC.RESULT
+    FROM COURSE C
+    NATURAL JOIN STUDENT ST
+    NATURAL JOIN SCORE SC
+    WHERE RESULT IN (
+            SELECT RESULT
+                FROM SCORE
+                WHERE RESULT = 100
+);
+    
 
