@@ -135,3 +135,26 @@ SELECT DNO
     WHERE (DNO = '10' AND (JOB = '분석' OR JOB = '개발'))
         OR (DNO = '20' AND (JOB = '분석' OR JOB = '개발'));
         
+--다중컬럼 in절(CNO, PNO)을 이용해서 기말고사 성적의 평균이 48점 이상인 과목번호 과목명 교수번호 교수이름 기말고사 성적 평균 조회
+
+SELECT CNO
+     , C.CNAME
+     , PNO
+     , P.PNAME
+     , AVG(SC.RESULT)
+    FROM COURSE C
+    JOIN PROFESSOR P
+    USING (PNO)
+    JOIN SCORE SC
+    USING (CNO)
+    WHERE (CNO, PNO) IN (
+                            SELECT CNO
+                                 , PNO
+                            FROM COURSE C
+                            JOIN PROFESSOR P
+                            USING (PNO)  
+    
+                            )
+    GROUP BY CNO, C.CNAME, PNO, P.PNAME
+    HAVING AVG(SC.RESULT) >= 48;                          
+     
