@@ -136,6 +136,28 @@ SELECT DNO
         OR (DNO = '20' AND (JOB = '분석' OR JOB = '개발'));
         
 --다중컬럼 in절(CNO, PNO)을 이용해서 기말고사 성적의 평균이 48점 이상인 과목번호 과목명 교수번호 교수이름 기말고사 성적 평균 조회
+SELECT CNO
+     , C.CNAME
+     , PNO
+     , P.PNAME
+     , AVG(SC.RESULT)
+    FROM COURSE C
+    NATURAL JOIN PROFESSOR P
+    NATURAL JOIN SCORE SC
+    WHERE (CNO, PNO) IN (
+                    -- 기말고사 성적의 평균이 48점 이상되는 과목의 CNO, PNO 뽑아주는 작업.
+                    SELECT CNO
+                         , PNO
+                        FROM SCORE SCC
+                        NATURAL JOIN COURSE CC
+                        NATURAL JOIN PROFESSOR PP
+                        GROUP BY CNO, PNO
+                        HAVING AVG(SCC.RESULT) >= 48 --이러면 그과목에 해당하는 교수번호 과목번호 잘 뽑을 수 있다.
+                    )
+    GROUP BY CNO, C.CNAME, PNO, P.PNAME;
+
+
+
 
 SELECT CNO
      , C.CNAME
@@ -156,5 +178,24 @@ SELECT CNO
     
                             )
     GROUP BY CNO, C.CNAME, PNO, P.PNAME
-    HAVING AVG(SC.RESULT) >= 48;                          
+    HAVING AVG(SC.RESULT) >= 48;         
+    
+    
+    
+--사원의 정보를 다중 컬럼 IN을 이용해서 조회
+--(DNO, MGR) 부서번호는 01, 02 사수번호 0001인 (서브쿼리)
+--사원번호, 사원이름, 사수번호, 부서번호 조회
+SELECT ENO
+     , ENAME
+     , MGR
+     , DNO
+    FROM EMP
+    WHERE(DNO, MGR) IN (
+                        SELECT DNO
+                             , MGR
+                            FROM EMP
+                            GROUP BY DNO, MGR
+                            HAVING DNO IN (01, 02) 
+                                AND MGR = '0001'
+                        );
      
