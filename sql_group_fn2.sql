@@ -131,7 +131,10 @@ PIVOT(MAX(SAL)
 ); --ORDER BY는 빼야 한다. 각 컬럼당 하나씩만 나온다. 열 이름만 가져온다.
 
 
---PIVOT 사용
+--1-6. PIVOT 사용 : 행을 열로 바꾼다.
+-- 항상 서브쿼리를 쓴다.
+-- 필요한 데이터만 가진 것만 사용하면, 원하는 데이터들을 컬럼(열)로 바꿀 수 있으므로,
+--새로운 서브쿼리로 사용하는 것이 좋다.
 SELECT *
     FROM (
             SELECT JOB
@@ -148,6 +151,57 @@ PIVOT(MAX(SAL)
                 )
 )
 ORDER BY DNO;
+
+--학과별 학년별 평점의 최대값 => 학과가 컬럼으로 변경되는 쿼리
+--PIVOT의 메인 FROM절은 사용할 컬럼만 가져올 수 있도록 서브쿼리로
+--테이블을 재구성하든가 사용할 컬럼만 가지고 있는 테이블을 CREATE TABLE로 새로 만들어서 사용.
+SELECT *
+    FROM (
+            SELECT MAJOR
+                 , SYEAR
+                 , AVR
+                FROM STUDENT
+    )
+    --통계함수를 사용했는데 GROUP BY가 없는 이유는
+    --데이터들이 컬럼이 되면서 컬럼은 중복으로 존재할 수 없기 때문에
+    --자동으로 그룹화된다.
+    PIVOT(MAX(AVR) --평점의 최대값.
+        FOR MAJOR IN ( -- 다 넣을 필요도 없다. 필요한 데이터만 사용하면 된다.
+                        '화학' AS 화학,
+                        '물리' AS 물리,
+                        '생물' AS 생물 --데이터를 컬럼으로 바꾸는 과정입니다.
+                    )
+    );
+    
+--학년별로도 가능.
+SELECT *
+    FROM (
+            SELECT MAJOR
+                 , SYEAR
+                 , AVR
+                FROM STUDENT
+    )
+    PIVOT(MAX(AVR) --평점의 최대값.
+        FOR SYEAR IN ( -- 다 넣을 필요도 없다. 필요한 데이터만 사용하면 된다.
+                        1 AS "1",
+                        2 AS "2",
+                        3 AS "3" --데이터를 컬럼으로 바꾸는 과정입니다.
+--                        4 AS "4"
+                    )
+    );
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -215,4 +269,53 @@ SELECT *
     );           
 
 
+--UNPIVOT2
+--PIVOT된 테이블 구조를 만들어 준다.
+SELECT *
+    FROM (
+            SELECT SYEAR
+                 , MAX(DECODE(MAJOR, '물리', AVR)) 물리
+                 , MAX(DECODE(MAJOR, '생물', AVR)) 생물
+                 , MAX(DECODE(MAJOR, '화학', AVR)) 화학
+                FROM STUDENT
+                GROUP BY SYEAR
+    );
 
+--UNPIVOT
+SELECT *
+    FROM (
+            SELECT SYEAR
+                 , MAX(DECODE(MAJOR, '물리', AVR)) 물리
+                 , MAX(DECODE(MAJOR, '생물', AVR)) 생물
+                 , MAX(DECODE(MAJOR, '화학', AVR)) 화학
+                FROM STUDENT
+                GROUP BY SYEAR
+    )
+    UNPIVOT(
+        AVR FOR MAJOR IN (물리, 생물, 화학)
+    )
+    ORDER BY MAJOR, SYEAR;
+
+
+
+--PIVOT으로 과목명을 열로 만들고 과목명에 해당하는 기말고사 성적의 평균값
+SELECT *
+    FROM (
+            SELECT C.CNAME
+                 , SC.RESULT
+                FROM COURSE C
+                JOIN SCORE SC
+                ON C.CNO = SC.CNO
+        )
+        PIVOT(AVG(RESULT)            
+            FOR CNAME IN ( 
+                            '일반화학' AS 일반화학,
+                            '유기화학' AS 유기화학,
+                            '물리화학' AS 물리화학,
+                            '무기화학' AS 무기화학,
+                            '해부학' AS 해부학,
+                            '핵화학' AS 핵화학
+                        )                      
+    );
+    
+            
