@@ -1,0 +1,1 @@
+{"resources":{"data_definition.sql":{"default-datasource":"oracle_thin-1877367b640-2d49200232dc9082","default-schema":"SYSTEM"},"examples/02. select1.sql":{"default-schema":"SYSTEM","default-datasource":"oracle_thin-1877367b640-2d49200232dc9082"},"sql_syntax.sql":{"default-datasource":"oracle_thin-1877367b640-2d49200232dc9082","default-schema":"SYSTEM"}}}
