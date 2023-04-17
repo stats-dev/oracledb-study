@@ -190,6 +190,19 @@ SELECT ENO
      , MGR
      , DNO
     FROM EMP
+    WHERE (DNO, MGR) IN (
+                            SELECT DNO
+                                 , MGR
+                                FROM EMP
+                                WHERE DNO IN ('01', '02')
+                                  AND MGR = '0001'
+                    );
+                    
+SELECT ENO
+     , ENAME
+     , MGR
+     , DNO
+    FROM EMP
     WHERE(DNO, MGR) IN (
                         SELECT DNO
                              , MGR
@@ -198,4 +211,37 @@ SELECT ENO
                             HAVING DNO IN (01, 02) 
                                 AND MGR = '0001'
                         );
-     
+
+
+--3. WITH
+--가상테이블 생성
+WITH
+    DNO10 AS (SELECT * FROM DEPT WHERE DNO = '10'),
+    JOBDEV AS (SELECT * FROM EMP WHERE JOB = '개발')
+SELECT JOBDEV.ENO 
+     , JOBDEV.ENAME
+     , JOBDEV.DNO
+     , DNO10.DNAME
+     , JOBDEV.JOB
+    FROM JOBDEV
+        , DNO10
+    WHERE JOBDEV.DNO = DNO10.DNO; --DNO가 서로 같은 경우만 가져오겠다.
+    
+--화학과 학생명단(STUDENT TABLE의 컬럼 전체), 
+--기말고사 성적중 과목명에 화학이 포함되는 성적 정보를 가상 테이블로 생성
+--(SCORE의 CNO, SNO, RESULT & COURSE의 CNAME) 
+--학생별 화학이 포함된 과목의 기말고사 성적의 평균(학생번호, 학생이름, 평균성적)
+
+WITH
+    CHEMSTU AS (SELECT * FROM STUDENT WHERE MAJOR = '화학'),
+    CHEMSC AS (SELECT CNO, SC.SNO, SC.RESULT FROM SCORE SC NATURAL JOIN COURSE C WHERE C.CNAME LIKE '%화학%')
+SELECT CHEMSTU.SNO 
+     , CHEMSTU.SNAME
+     , ROUND(AVG(CHEMSC.RESULT), 2)
+    FROM CHEMSTU
+        , CHEMSC
+    WHERE CHEMSTU.SNO = CHEMSC.SNO    
+    GROUP BY CHEMSTU.SNO, CHEMSTU.SNAME;
+
+
+    
