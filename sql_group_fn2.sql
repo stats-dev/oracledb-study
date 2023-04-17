@@ -318,4 +318,40 @@ SELECT *
                         )                      
     );
     
-            
+
+
+SELECT *
+    FROM (
+            SELECT CNAME
+                 , RESULT
+                FROM SCORE
+                NATURAL JOIN COURSE --NATURAL JOIN 편함.
+        )
+    PIVOT(AVG(RESULT)
+        FOR CNAME IN (
+                        '정역학' AS 정역학,
+                        '일반화학' AS 일반화학,
+                        '양자물리학' AS 양자물리학
+                        )
+        );
+
+
+SELECT CNAME
+     , AVG(RESULT)
+    FROM SCORE
+    NATURAL JOIN COURSE
+    GROUP BY CNAME;
+    
+
+SELECT *
+    FROM (
+            SELECT AVG(DECODE(CNAME, '정역학', RESULT)) AS 정역학
+                 , AVG(DECODE(CNAME, '일반화학', RESULT)) AS 일반화학
+                 , AVG(DECODE(CNAME, '양자물리학', RESULT)) AS 양자물리학
+                FROM SCORE
+                NATURAL JOIN COURSE
+        )
+    UNPIVOT(
+        RESAVG FOR CNAME IN (정역학, 일반화학, 양자물리학) --RESAVG는 임의로 넣어도 위의 값을 받아 열 이름으로 지정이 가능한 듯 하다.
+    );
+                
