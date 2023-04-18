@@ -148,12 +148,112 @@ UPDATE EMP_COPY
         COMM = COMM * 3 --현재COMM에 3배를 한 값이 다시 보너스로 잡힌다.
     WHERE ENO = '3005';
 
+--alter session set nls_date_format='YYYY/MM/DD HH24:MI:SS';
+
 --PROFESSOR 테이블의 HIREDATE를 + 20년해서 업데이트
 UPDATE PROFESSOR
 SET
     HIREDATE = ADD_MONTHS(HIREDATE, 20 * 12);
+
+COMMIT; --이걸 하면 작업이 완료되어 롤백이 안된다.
     
 --ROLLBACK;    
 SELECT * FROM PROFESSOR;
 
     
+--EMP_COPY의 데이터 삭제
+DELETE FROM EMP_COPY;
+
+--EMP의 전체 데이터를 EMP_COPY에 저장
+INSERT INTO EMP_COPY
+SELECT * FROM EMP;
+COMMIT;
+
+SELECT * FROM EMP_COPY;
+--20, 30번 부서 사원들을 60부서로 통합, 보너스가 현재 보너스의 * 1.5
+UPDATE EMP_COPY
+    SET 
+        DNO = '60',
+        COMM = COMM * 1.5
+    WHERE DNO IN ('20', '30');   
+
+COMMIT;
+
+
+--DEPT_COPY 테이블 생성
+CREATE TABLE DEPT_COPY --AS SELECT FROM을 기억하자!
+    AS SELECT * FROM DEPT; --이러면 그대로 카피해서 타입 지정 및 데이터를 입력해줍니다.
+ 
+ 
+SELECT *
+    FROM DEPT_COPY;
+    
+    
+--서브쿼리를 이용한 데이터 수정
+UPDATE DEPT_COPY
+    SET
+        (DNO, DNAME, LOC) = (
+                        SELECT DNO
+                             , DNAME
+                             , LOC --추가할 때는 그 순서를 맞춰줘야 한다.
+                            FROM DEPT
+                            WHERE DNO = '50'
+                        )
+     WHERE DNO IN ('20', '30');                   
+
+
+--40번 부서의 DIRECTOR를 EMP테이블의 급여가 제일 높은 사원으로 업데이트
+UPDATE DEPT_COPY
+    SET
+        (DIRECTOR) = (
+                                    SELECT ENO
+                                        FROM EMP
+                                        WHERE SAL = (
+                                                        SELECT MAX(SAL)
+                                                            FROM EMP
+                                                    )
+         )
+       WHERE DNO = '40';
+
+SELECT *
+    FROM DEPT_COPY;
+
+
+UPDATE DEPT_COPY
+    SET
+        DIRECTOR = (
+                        SELECT ENO
+                            FROM EMP
+                            WHERE SAL = (
+                                            SELECT MAX(SAL)
+                                                FROM EMP
+                                            )
+                    ) 
+  WHERE DNO = '40';
+
+COMMIT;
+
+SELECT *
+    FROM DEPT_COPY;
+    
+--1-4. DELETE FROM
+--전체 데이터 삭제 => 조건절 생략
+DELETE FROM EMP_COPY; --롤백
+
+SELECT *
+    FROM EMP_COPY;
+
+--일부 데이터 삭제 => WHERE절로 조건 추가
+DELETE FROM EMP_COPY
+    WHERE JOB = '지원';
+    
+--WHERE 절에 서브쿼리를 사용하여 특정 데이터 삭제
+--EMP_COPY에서 급여가 4000이상되는 사원 정보 삭제
+DELETE FROM EMP_COPY
+    WHERE ENO IN (
+                    SELECT ENO
+                        FROM EMP_COPY
+                        WHERE SAL >= 4000
+                    );
+
+
