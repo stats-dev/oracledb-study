@@ -257,3 +257,60 @@ DELETE FROM EMP_COPY
                     );
 
 
+--STUDENT 테이블 참조하여 ST_COPY 테이블 생성
+CREATE TABLE ST_COPY
+    AS SELECT * FROM STUDENT;
+
+
+--CREATE TABLE ST_COPY
+--    AS SELECT * FROM STUDENT;
+
+--SCORE 학생별 기말고사 성적 평균이 60점 이상인 학생정보 ST_COPY에서 삭제
+DELETE FROM ST_COPY
+    WHERE SNO IN (     
+                    SELECT SNO
+                        FROM SCORE
+                        GROUP BY SNO
+                        HAVING AVG(RESULT) >= 60
+                    );
+--COMMIT;
+
+--사라진 것 확인.
+SELECT *
+    FROM ST_COPY
+    WHERE SNO IN ('915301', '935602');
+
+
+
+--1-5. LOCK
+--수정후 트랜잭션 완료 안함.
+UPDATE EMP_COPY
+    SET ENAME = 'rrr'
+    WHERE DNO = '60'; --60인 사원 이름을 다 바꾼다.
+
+
+SELECT * FROM EMP_COPY;
+--SQLPLUS에서는 그대로 유지되는 것을 확인.(COMMIT 해야 변경됨)
+
+
+--점유 상태, 
+--SQLPLUS에서,
+--SQL> UPDATE EMP_COPY SET JOB = '개발' WHERE DNO = '60';
+
+ROLLBACK;
+--롤백, 커밋과 동시에 SQLPLUS에서도 업데이트가 된다.
+--마찬가지로, SQLDEVELOPER에서도 SQLPLUS가 점유중(커밋, 롤백)이면 계속 대기상태로 있게 된다.
+--대량의 데이터 처리할 때도 유사한 현상이 있는데, KILL SESSION을 쓸 수 있다.
+SELECT * FROM EMP_COPY;
+
+
+--SELECT, DEADLOCK 구문(데이터가 많을 경우)
+--이렇게 쿼리를 짜면? 모든 테이블을 다 매핑해서 맞추게 된다. 데드락 걸릴 수 있음!
+SELECT A.*
+     , B.*
+     , C.*
+    FROM STUDENT A,
+         SCORE B,
+         PROFESSOR C;
+         
+
