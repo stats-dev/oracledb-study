@@ -45,10 +45,9 @@ CREATE TABLE EMP_COPY(
 --EMP 테이블에서 DNO이 30인 데이터들만 가져와서 저장
 INSERT INTO EMP_COPY --모든 데이터, 컬럼 생략, 컬럼 달라야 한다.
 SELECT * 
-    FROM EMP 
+    FROM EMP
     WHERE DNO = '30';
 COMMIT;
-
 
 
 SELECT *
