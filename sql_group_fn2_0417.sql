@@ -5,7 +5,7 @@ SELECT DNO
      , JOB
      , MAX(SAL)
      , SUM(SAL)
-     , AVG(SAL)
+     , ROUND(AVG(SAL), 2) AS AVG_SAL
      , COUNT(*)
     FROM EMP
     GROUP BY DNO, JOB;
@@ -19,7 +19,7 @@ SELECT DNO
      , JOB
      , MAX(SAL)
      , SUM(SAL)
-     , AVG(SAL)
+     , ROUND(AVG(SAL), 2) AS AVG_SAL
      , COUNT(*)
     FROM EMP
     GROUP BY ROLLUP(DNO, JOB) --GROUP BY 해당 안되는 마지막 칼럼 빼주면서 고대로 출력, 마지막은 그룹화 없이 전체 데이터 대상 결과값 출력.
@@ -36,7 +36,7 @@ SELECT DNO
      , JOB
      , MAX(SAL)
      , SUM(SAL)
-     , AVG(SAL)
+     , ROUND(AVG(SAL), 2) AS AVG_SAL
      , COUNT(*)
     FROM EMP
     GROUP BY CUBE(DNO, JOB)
@@ -49,7 +49,7 @@ SELECT DNO
      , JOB
      , MAX(SAL)
      , SUM(SAL)
-     , AVG(SAL)
+     , ROUND(AVG(SAL), 2) AS AVG_SAL
      , COUNT(*)
     FROM EMP
     GROUP BY GROUPING SETS(DNO, JOB)
@@ -63,7 +63,7 @@ SELECT DNO
      , JOB --계속 빠질 때마다 그룹화 풀림. 1로 표기됨.
      , MAX(SAL)
      , SUM(SAL)
-     , AVG(SAL)
+     , ROUND(AVG(SAL), 2) AS AVG_SAL
      , COUNT(*)
      , GROUPING(DNO) --DNO, JOB 두 개만 그룹화되었는지 확인해본다.
      , GROUPING(JOB)
