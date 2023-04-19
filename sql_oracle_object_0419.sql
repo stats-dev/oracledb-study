@@ -319,7 +319,166 @@ SELECT ROWNUM
                     GROUP BY ST.MAJOR
                     ORDER BY AVG(SC.RESULT) DESC
         ) A
-    WHERE ROWNUM <= 3;
+      WHERE ROWNUM <= 3; --최상위 ROWNUM의 경우에는, 크다, 같다는 맞춰줄 수 없다.
+--    WHERE ROWNUM > 3; --최상위 ROWNUM의 경우에는, 크다, 같다는 맞춰줄 수 없다.
+--    WHERE ROWNUM = 3; --최상위 ROWNUM의 경우에는, 크다, 같다는 맞춰줄 수 없다.
 
 
+SELECT A.*
+    FROM (
+            SELECT ROWNUM AS RN
+                 , ST.*
+                FROM STUDENT ST
+        ) A
+    WHERE A.RN > 5; --인라인 뷰 위치에서 ROWNUM이 들어가면, 크다 같다도 가능하다.
+            
+            
+--이것도 최상위 B 칼럼 내에서는 크다, 같다 비교 다 가능하게 만들 수 있다.
+--인라인뷰 안쪽으로 넣고 조회.
+SELECT B.*
+    FROM (
+            SELECT ROWNUM AS RN
+     , A.MAJOR
+     , A.RES
+    FROM (
+            SELECT ST.MAJOR
+                     , ROUND(AVG(SC.RESULT), 2) AS RES
+                    FROM STUDENT ST
+                    JOIN SCORE SC
+                    ON ST.SNO = SC.SNO
+                    GROUP BY ST.MAJOR
+                    ORDER BY AVG(SC.RESULT) DESC
+        ) A
+
+    ) B
+      WHERE B.RN > 3;    
+
+
+--잘못된 ROWNUM의 사용
+-- 급여가 높은 순으로 세명 동작할 것인가? NO
+--ROWNUM이 붙은 다음 정렬이 일어남.
+SELECT ROWNUM
+     , ENO
+     , ENAME
+     , SAL
+    FROM EMP
+    WHERE ROWNUM <= 3 --잘못된 출력이다. 7200 순으로 나타나야함.
+    ORDER BY SAL DESC;
     
+-- =======> 수정
+--ROWNUM은 위치에 따라서 결과가 바뀌기 때문에
+--위치를 잘 지정해야하고 최상위 SELECT 구문에서의 ROWNUM은
+-- <, <= 비교만 가능하다.
+SELECT ROWNUM
+     , A.ENO
+     , A.ENAME
+     , A.SAL
+    FROM (
+            SELECT ENO
+                 , ENAME
+                 , SAL
+                FROM EMP
+                ORDER BY SAL DESC --이렇게 먼저 정렬된 상태로 진행된 후에 조건
+    
+            ) A
+    WHERE ROWNUM <= 3; --크다, 같다 안된다.
+
+
+
+SELECT B.*
+    FROM (
+            SELECT ROWNUM AS RN
+                 , A.ENO
+                 , A.ENAME
+                 , A.SAL
+                FROM (
+                        SELECT ENO
+                             , ENAME
+                             , SAL
+                            FROM EMP
+                            ORDER BY SAL DESC --이렇게 먼저 정렬된 상태로 진행된 후에 조건
+                
+                        ) A
+            ) B
+    WHERE B.RN > 3; 
+    
+    
+    
+--1-4. SEQUENCE
+--시퀀스를 사용할 테이블 생성
+CREATE TABLE EMP_COPY1(
+        ENO NUMBER,
+        ENAME VARCHAR2(20),
+        JOB VARCHAR2(10),
+        MGR NUMBER,
+        HDATE DATE,
+        SAL NUMBER,
+        COMM NUMBER,
+        DNO NUMBER
+);
+
+
+CREATE TABLE DEPT_COPY1 (
+        DNO NUMBER,
+        DNAME VARCHAR2(10),
+        LOC VARCHAR2(10),
+        DIRECTOR NUMBER
+);
+
+
+--시퀀스 2개 생성
+--옵션추가한 시퀀스 생성
+CREATE SEQUENCE EMP_CO_ENO_SEQ
+--START WITH --탭/들여쓰기 안주면 다른 오라클 함수로 인식
+    START WITH 1
+    INCREMENT BY 2
+    MAXVALUE 10
+    NOMINVALUE
+    CYCLE
+    NOCACHE;
+
+
+
+--옵션을 하나도 추가하지 않은 시퀀스를 생성
+CREATE SEQUENCE DEPT_CO_ENO_SEQ;
+--DROP TABLE DEPT_COPY;
+
+--NEXTVAL : 시퀀스가 가리키는 값을 다음 값으로 옮긴다. 그걸 CURRVAL가 다음에 받아준다.
+--이걸 사용
+INSERT INTO EMP_COPY1
+VALUES(EMP_CO_ENO_SEQ.NEXTVAL,'F', '개발', 0, SYSDATE, 3000, 100, 0); --숫자는 NULL 못들감.
+--좋은 시퀀스는 아니다. 중복이 우려되는 값들이 키로 가있다.
+
+
+INSERT INTO EMP_COPY1
+VALUES(EMP_CO_ENO_SEQ.CURRVAL,'F', '개발', 0, SYSDATE, 3000, 100, 0); --숫자는 NULL 못들감.
+
+
+SELECT *
+    FROM EMP_COPY1;
+    
+    
+DELETE FROM  EMP_COPY1
+    WHERE ENAME = 'F';
+
+
+--옵션이 없는 시퀀스의 사용
+INSERT INTO DEPT_COPY1
+VALUES(DEPT_CO_ENO_SEQ.NEXTVAL, '개발', '서울', 0);
+
+
+SELECT *
+    FROM DEPT_COPY1;
+
+
+
+--생성된 시퀀스를 조회하는 쿼리
+SELECT SEQUENCE_NAME
+    , MAX_VALUE
+    , MIN_VALUE
+    , INCREMENT_BY
+    , CACHE_SIZE
+    , LAST_NUMBER
+    , CYCLE_FLAG
+FROM USER_SEQUENCES;
+
