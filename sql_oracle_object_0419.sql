@@ -482,3 +482,50 @@ SELECT SEQUENCE_NAME
     , CYCLE_FLAG
 FROM USER_SEQUENCES;
 
+
+--시퀀스의 현재 값을 조회
+SELECT DEPT_CO_ENO_SEQ.CURRVAL FROM DUAL;
+
+
+--시퀀스의 다음 값을 조회
+--NEXTVAL 호출 시 무조건 시퀀스가 다음값으로 세팅됨. 시퀀스가 가리키는 값이 다음값으로 넘어감
+SELECT DEPT_CO_ENO_SEQ.NEXTVAL FROM DUAL;
+
+
+--시퀀스의 수정 
+ALTER SEQUENCE DEPT_CO_ENO_SEQ
+    INCREMENT BY 5
+    MAXVALUE 100
+    CYCLE; --CYCLE이 Y인 상태로, 100을 넘어가면 다시 1부터 시작!
+
+
+--시퀀스의 삭제
+DROP SEQUENCE DEPT_CO_ENO_SEQ;
+    
+    
+--1-5. SYNONYM(객체에 별칭주기)
+--현재 접속한 사용자에서 계속 사용할 수 있는 테이블 별칭 주기
+CREATE SYNONYM DC
+    FOR DEPT_COPY1;
+
+--SYNONYM의 사용
+SELECT *
+    FROM DC;
+    
+--모든 사용자가 계속 사용할 수 있는 테이블의 별칭 주기. 테이블이 길때는 이렇게 별칭이 유용합니다!
+CREATE PUBLIC SYNONYM EC --EMP_COPY니까 EC
+    FOR C##STUDY.EMP_COPY1;
+    
+SELECT *
+    FROM EC;
+    
+    
+--SYNONYM 삭제
+DROP SYNONYM DC;    
+
+
+--PUBLIC SYNONYM 삭제
+--권한 별도 부여
+--SQLPLUS> GRANT DROP PUBLIC SYNONYM TO C##STUDY;    
+DROP PUBLIC SYNONYM EC;
+

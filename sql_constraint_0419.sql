@@ -1,0 +1,53 @@
+--1. CONSTRAINT
+--1-1. PRIMARY KEY
+--단일 컬럼 PK 테이블 생성
+CREATE TABLE EMP_PK1(
+    --CONSTRAINT 제약조건명을 생략하면 제약조건명을 SYSTEM에서 자동으로 생성해준다.
+    ENO NUMBER PRIMARY KEY,
+    ENAME VARCHAR2(20),
+    JOB VARCHAR2(10),
+    MGR NUMBER,
+    HDATE DATE,
+    DNO NUMBER
+); --시스템이 생성하는 키
+
+
+CREATE TABLE DEPT_PK1(
+    DNO NUMBER,
+    DNAME VARCHAR2(10),
+    LOC VARCHAR2(10),
+    DIRECTOR NUMBER,
+    CONSTRAINT PK_DEPT_DNO PRIMARY KEY(DNO) --괄호로 잘 지정해주면 좋습니다.
+); --내가 만든 이름 가진 키
+
+
+--중복허용 확인
+INSERT INTO DEPT_PK1
+VALUES (1, '개발', '부산', 1);
+
+--중복 안됨. ORA-00001: 무결성 제약 조건(C##STUDY.PK_DEPT_DNO)에 위배됩니다
+--INSERT INTO DEPT_PK1
+--VALUES (1, '개발2', '부산', 2);
+
+INSERT INTO DEPT_PK1
+VALUES (2, '개발2', '부산', 2);
+
+
+--PK에 NULL 저장 : PK에 NULL값 불가
+INSERT INTO EMP_PK1
+VALUES(NULL, NULL, NULL, NULL, NULL, NULL);
+
+--PK말고 NULL 저장1 : 가능
+INSERT INTO EMP_PK1
+VALUES(1, NULL, NULL, NULL, NULL, NULL);
+
+--PK빼고 NULL 저장2(중복X) : 가능
+INSERT INTO EMP_PK1
+VALUES(2, NULL, NULL, NULL, NULL, NULL);
+
+
+SELECT *
+    FROM DEPT_PK1;
+    
+SELECT *
+    FROM EMP_PK1;    
