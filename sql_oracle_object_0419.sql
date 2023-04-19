@@ -172,12 +172,154 @@ SELECT *
     
 
 
+--원천 테이블의 데이터가 변경되면 뷰의 데이터도 자동으로 변경
+UPDATE COURSE
+    SET
+        CNAME = '일반화학1'
+    WHERE CNAME = '일반화학';
+
+COMMIT;
+
+UPDATE STUDENT
+    SET
+        MAJOR = '유공1'
+    WHERE MAJOR = '유공';
+    
+COMMIT;
+
+--이렇게 보면 원천테이블 변경해두면 뷰가 바로 업데이트된걸 조회할 수 있다.
+SELECT *
+    FROM V_AVG_SCORE
+    ORDER BY CNO, MAJOR;
+
+--단순 뷰 생성(DML의 사용이 가능)
+--DML을 사용하면 원천 테이블의 데이터가 추가/삭제/수정되는데
+--조회쿼리가 1학년만 가져오는 쿼리라서 원천테이블 추가된 2, 3, 4학년의 
+--데이터는 표출되지 않는다.
+
+CREATE OR REPLACE VIEW ST_CH(
+    SNO,
+    SNAME,
+    SYEAR,
+    AVR
+) AS (
+    SELECT SNO
+         , SNAME
+         , SYEAR
+         , AVR
+        FROM STUDENT
+        WHERE SYEAR = 1 --1학년만 한정하는 제약조건이 걸림.
+);
+
+SELECT *
+    FROM ST_CH
+    WHERE SNAME = '홍길동';
+    
+SELECT *
+    FROM STUDENT
+    WHERE SNAME = '홍길동';
+
+--단순 뷰에서 DML의 사용
+INSERT INTO ST_CH
+VALUES (
+            '9003',
+            '홍길동',
+            1,
+            4.0
+);
+
+COMMIT;
 
 
+--CHECK OPTION 추가하면 제약조건이 생성되어
+--조회해온 조건에 맞는 데이터만 추가할 수 있도록 변경
+--1학년 데이터만 조회해오기 때문에
+--1학년 데이터만 입력할 수 있도록 변경.
+CREATE OR REPLACE VIEW ST_CH(
+    SNO,
+    SNAME,
+    SYEAR,
+    AVR
+) AS (
+    SELECT SNO
+         , SNAME
+         , SYEAR
+         , AVR
+        FROM STUDENT
+        WHERE SYEAR = 1 --1학년만 한정하는 제약조건이 걸림.
+)
+WITH CHECK OPTION CONSTRAINT VIEW_ST_CH_CK; --원천테이블에도 입력 안되게 막아버리는 뷰를 생성.
 
 
+--1-5. 인라인 뷰 : FROM, JOIN 절 사용 서브쿼리
+--부서별 최소 급여 받는 직원 조회
+SELECT E.ENO
+     , E.ENAME
+     , E.DNO
+     , B.SAL
+    FROM EMP E
+    JOIN (
+            --인라인 뷰
+            SELECT DNO
+                 , MIN(SAL) AS SAL
+                FROM EMP
+                GROUP BY DNO
+        ) B
+    ON E.SAL = B.SAL;
+    
+    
+
+--1-6. 뷰의 삭제
+DROP VIEW ST_CH;
+DROP VIEW V_AVG_SCORE;
 
 
+--인라인 뷰와 ROWNUM을 이용해서 최상위 N데이터 조회
+--급여가 최상위 3명 데이터 조회
+SELECT ROWNUM
+     , A.ENO
+     , A.ENAME
+     , A.SAL
+    FROM (
+            SELECT ENO
+                 , ENAME
+                 , SAL
+                FROM EMP
+                ORDER BY SAL DESC
+        ) A
+    WHERE ROWNUM <= 3; --이렇게 조건 걸면 TOP 1,2,3만 출력이 된다.
 
 
+--학과별 기말고사 성적의 평균이 가장 높은 3개 학과 조회
+SELECT ROWNUM
+     , A.MAJOR
+     , A.AVRES
+    FROM (
+            SELECT ST.MAJOR
+                 , AVG(SC.RESULT) AS AVRES
+                FROM STUDENT ST
+                JOIN SCORE SC
+                ON ST.SNO = SC.SNO
+                GROUP BY ST.MAJOR
+                ORDER BY AVG(SC.RESULT) DESC
+    ) A
+    WHERE ROWNUM <= 3;
+    
+    
+    
+SELECT ROWNUM
+     , A.MAJOR
+     , A.RES
+    FROM (
+            SELECT ST.MAJOR
+                     , ROUND(AVG(SC.RESULT), 2) AS RES
+                    FROM STUDENT ST
+                    JOIN SCORE SC
+                    ON ST.SNO = SC.SNO
+                    GROUP BY ST.MAJOR
+                    ORDER BY AVG(SC.RESULT) DESC
+        ) A
+    WHERE ROWNUM <= 3;
 
+
+    
