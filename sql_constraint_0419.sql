@@ -51,3 +51,64 @@ SELECT *
     
 SELECT *
     FROM EMP_PK1;    
+
+
+
+--다중 컬럼 PK 지정
+--다중 컬럼 PK 지정시 아래 방법은 허용 안됨
+--에러: ORA-02260: 테이블에는 하나의 기본 키만 가질 수 있습니다.
+CREATE TABLE SCORE_PK1 (
+    CNO NUMBER PRIMARY KEY,
+    SNO NUMBER PRIMARY KEY,
+    RESULT NUMBER
+);
+
+--다중 컬럼 PK 지정 방식
+CREATE TABLE SCORE_PK1 (
+    CNO NUMBER,
+    SNO NUMBER,
+    RESULT NUMBER,
+    CONSTRAINT PK_SCORE_CNO_SNO PRIMARY KEY(CNO, SNO) --이 두 값이 쌍으로 PK가 되며 두 값 모두 중복 없어야 실행된다.
+);
+
+
+--다중 컬럼 PK는 다중 컬럼이 PK쌍이 된다.
+--PK로 지정된 모든 컬럼의 값이 "쌍으로" 중복돼야 중복으로 인식
+--EX)게시글 번호에 다중 첨부파일 올릴때 유용하다!?
+INSERT INTO SCORE_PK1 
+VALUES(1, 1, 100);
+
+INSERT INTO SCORE_PK1 
+VALUES(1, 2, 99);
+
+INSERT INTO SCORE_PK1 
+VALUES(1, 3, 98);
+
+INSERT INTO SCORE_PK1 
+VALUES(1, 1, 97);
+
+
+SELECT *
+    FROM SCORE_PK1;
+    
+
+--PK 추가
+ALTER TABLE DEPT
+    ADD CONSTRAINT PK_DEP_DNO PRIMARY KEY(DNO);
+
+--SCORE 테이블에 CNO, SNO PK 추가
+ALTER TABLE SCORE
+    ADD CONSTRAINT PK_SCO_CNO_SNO PRIMARY KEY(CNO, SNO);
+
+
+--PK 삭제
+--제약조건과 데이터 함께 삭제
+ALTER TABLE DEPT
+    DROP CONSTRAINT PK_DEP_DNO;
+    
+--ALTER TABLE DEPT
+--    DROP PRIMARY KEY;
+
+
+
+
