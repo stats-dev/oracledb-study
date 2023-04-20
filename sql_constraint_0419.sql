@@ -111,7 +111,7 @@ ALTER TABLE DEPT
 
 
 
---1-2. FOREIGN KEY
+--1-2. FOREIGN KEY(테이블간의 관계를 맺어줌)
 --DEPT_PK1의 DNO을 참조하여 EMP_PK1의 DNO을 FK로 생성
 DROP TABLE EMP_PK1;
 
@@ -243,10 +243,10 @@ SELECT * FROM ALL_CONSTRAINTS
 
 --데이터 저장
 INSERT INTO DEPT_PK1
-VALUES(1, '개발1', '서울', 0);
+VALUES(1, '개발1', '서울', 1);
 
 INSERT INTO DEPT_PK1
-VALUES(2, '개발2', '부산', 0);
+VALUES(2, '개발2', '부산', 2);
 
 
 
@@ -257,16 +257,165 @@ INSERT INTO EMP_PK_FK2
 VALUES(2, '장길산', '개발', 0, SYSDATE, 3000, 300, 2);
 
 SELECT *
-    FROM EMP_PK_FK2; 
-
---DELETE CASCADE 옵션일 때 부모데이터 삭제
-ALTER TABLE EMP_PK_FK1
-    DROP CONSTRAINT FK_EMP_DNO; --1에 물린 외래키를 삭제해줍니다! 원활한 삭제를 위함입니다.
-
-DELETE FROM DEPT_PK1; --이러면 부모(DEPT_PK1), 자식(EMP_PK_FK2)도 함께 삭제가 됩니다.
+    FROM DEPT_PK1;
 
 SELECT *
     FROM EMP_PK_FK2; 
+
+--DELETE CASCADE 옵션일 때 부모데이터 삭제
+--오라클에서는 UPDATE CASCADE는 지원안됨
+--DELETE CASCADE 옵션은 부모테이블 데이터를 삭제할 수 있게 해주는데
+--부모테이블에서 삭제되는 데이터를 참조하고 있는 자식테이블의 데이터도 같이 삭제된다.
+--UPDATE CASCADE 옵션은 부모테이블의 데이터를 수정할 수 있다.
+--부모테이블에서 수정되는 데이터를 참조하고 있는 자식테이블의 데이터도 같이 수정된다.
+DELETE FROM DEPT_PK1
+    WHERE DNO = 1;
+    
+ALTER TABLE EMP_PK_FK1 
+    DROP CONSTRAINT FK_EMP_DNO; --DEPT_PK1과 관계가 있다. 1에 물린 외래키를 삭제해줍니다! 원활한 삭제를 위함입니다.
+
+--DELETE FROM DEPT_PK1; --이러면 부모(DEPT_PK1), 자식(EMP_PK_FK2)도 함께 삭제가 됩니다.
+
+SELECT *
+    FROM EMP_PK_FK2; 
+
+
+--FK 관계의 종류
+--1:1 부모테이블 데이터 1개당 자식테이블 데이터 1개가 생성되는 구조
+--부모테이블의 PK, UK 컬럼이 자식테이블의 FK면서 PK,UK로 잡혀야된다.
+CREATE TABLE T_USER(
+        USER_ID VARCHAR(20) PRIMARY KEY,
+        PASSWORD VARCHAR2(50),
+        JOIN_DATE DATE
+);
+
+
+INSERT INTO T_USER
+VALUES('gogi', '1234', SYSDATE); --하나만 존재
+--gogi 아이디 더이상 못만듦.
+COMMIT;
+
+
+CREATE TABLE T_USER_DETAIL(
+        USER_ID VARCHAR2(20) PRIMARY KEY,
+        USER_NAME VARCHAR2(20),
+        USER_EMAIL VARCHAR2(100),
+        USER_TEL NUMBER(11),
+        CONSTRAINT FK_USER_ID FOREIGN KEY(USER_ID)
+            REFERENCES T_USER(USER_ID)
+);        
+
+
+INSERT INTO T_USER_DETAIL
+VALUES('gogi', NULL, NULL, NULL); --하나만 존재할 수 있다.
+
+COMMIT;
+
+--1: N 관계
+--부모테이블의 데이터 1개로 자식테이블 데이터 여러개를 생성할 수 있는 관계
+--DEPT_PK1과 EMP_PK_FK100는 1:N관계
+--DEPT_PK1의 PK인 DNO으로 EMP_PK_FK2에서는 여러개의 데이터(중복)을 생성할 수 있기 때문에 1:N관계
+--T_BOARD, T_BOARD_FILE을 1:N관계로 만들어보기
+DROP TABLE T_BOARD_FILE;
+
+
+CREATE TABLE T_BOARD_FILE(
+        BOARD_NO NUMBER,
+        BOARD_FILE_NO NUMBER,
+        BOARD_FILE_NM VARCHAR2(200),
+        BOARD_FILE_PATH VARCHAR2(2000),
+        ORIGIN_FILE_NM VARCHAR2(200),
+        CONSTRAINT PK_BF_BOARD_FILE_NO PRIMARY KEY (BOARD_NO, BOARD_FILE_NO), --다중컬럼이므로 PK에서는 문제 없음.(1,1), (1,2), ... (1, N) 가능.
+        CONSTRAINT PK_BOARD_BOARD_NO FOREIGN KEY(BOARD_NO)
+            REFERENCES T_BOARD(BOARD_NO)
+);
+
+INSERT INTO T_BOARD
+VALUES(1, NULL, NULL, NULL, NULL, NULL); --이거는 더이상 PK 1인 데이터 입력 불가.
+
+
+INSERT INTO T_BOARD_FILE
+VALUES(1, 1, NULL, NULL, NULL);
+
+INSERT INTO T_BOARD_FILE
+VALUES(1, 2, NULL, NULL, NULL); --이거는 여러개 파일 데이터 생성이 가능하다. (1,1 ~ N개)
+INSERT INTO T_BOARD_FILE
+VALUES(1, 3, NULL, NULL, NULL); --이거는 여러개 파일 데이터 생성이 가능하다. (1,1 ~ N개)
+INSERT INTO T_BOARD_FILE
+VALUES(1, 4, NULL, NULL, NULL); --이거는 여러개 파일 데이터 생성이 가능하다. (1,1 ~ N개)
+INSERT INTO T_BOARD_FILE
+VALUES(1, 5, NULL, NULL, NULL); --이거는 여러개 파일 데이터 생성이 가능하다. (1,1 ~ N개)
+
+
+
+
+--1-3. Unique Key
+--UK 생성
+CREATE TABLE EMP_UK(
+    ENO NUMBER CONSTRAINT UK_EMP_ENO UNIQUE,
+    ENAME VARCHAR2(20)
+);
+
+--데이터 저장
+INSERT INTO EMP_UK
+VALUES(1, '홍길동');
+
+INSERT INTO EMP_UK
+VALUES(1, '장길산'); --ORA-00001: 무결성 제약 조건(C##STUDY.UK_EMP_ENO)에 위배됩니다
+
+INSERT INTO EMP_UK
+VALUES(2, '장길산'); --해결.
+
+
+--NULL값은 중복 저장 가능합니다.
+INSERT INTO EMP_UK
+VALUES(NULL, '홍길동1');
+INSERT INTO EMP_UK
+VALUES(NULL, '홍길동2');
+INSERT INTO EMP_UK
+VALUES(NULL, '홍길동3');
+INSERT INTO EMP_UK
+VALUES(NULL, '홍길동4');
+INSERT INTO EMP_UK
+VALUES(NULL, '홍길동5');
+COMMIT;
+
+SELECT *
+    FROM EMP_UK;
+
+
+--1-4. CHECK
+--체크 생성
+CREATE TABLE EMP_CHK(
+    ENO NUMBER PRIMARY KEY,
+    ENAME VARCHAR2(20),
+    JOB VARCHAR2(10),
+    MGR NUMBER,
+    SAL NUMBER(11, 3),
+    COMM NUMBER(5, 2),
+    CONSTRAINT CHK_EMP_SAL CHECK(SAL >= 3000),
+    CONSTRAINT CHK_EMP_COMM CHECK(COMM BETWEEN 100 AND 1000)
+);
+
+--CHECK 조건에 맞지 않는 데이터 저장
+INSERT INTO EMP_CHK
+VALUES(1, NULL, NULL, 0, 1000, 900); -- ORA-02290: 체크 제약조건(C##STUDY.CHK_EMP_SAL)이 위배되었습니다
+
+INSERT INTO EMP_CHK
+VALUES(1, NULL, NULL, 0, 3000, 500);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
