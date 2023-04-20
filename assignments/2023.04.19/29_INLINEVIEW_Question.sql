@@ -17,6 +17,20 @@ SELECT ROWNUM
     WHERE ROWNUM <= 3;
 
 
+SELECT ROWNUM
+     , A.SNO
+     , A.SNAME
+     , A.CONAVR
+    FROM (
+                SELECT SNO
+                     , SNAME
+                     , ROUND(AVR * 1.125, 2) AS CONAVR
+                    FROM STUDENT
+                    ORDER BY ROUND(AVR * 1.125, 2) DESC    
+            ) A
+        WHERE ROWNUM <= 3;
+
+
 
 --2) 기말고사 과목별 평균이 높은 3과목을 검색하세요.
 SELECT ROWNUM
@@ -34,6 +48,22 @@ SELECT ROWNUM
             ) A
     WHERE ROWNUM <= 3;
 
+
+SELECT ROWNUM
+     , A.CNO
+     , A.CNAME
+     , A.AVGRES
+    FROM (
+                SELECT CNO
+                     , C.CNAME
+                     , ROUND(AVG(SC.RESULT), 2) AS AVGRES
+                    FROM COURSE C
+                    NATURAL JOIN SCORE SC
+                    GROUP BY CNO, C.CNAME
+                    ORDER BY ROUND(AVG(SC.RESULT), 2) DESC
+    
+    ) A
+    WHERE ROWNUM <= 3;
 
 --3) 학과별, 학년별, 기말고사 평균이 순위 3까지를 검색하세요.(학과, 학년, 평균점수 검색)
 SELECT ROWNUM
@@ -53,6 +83,21 @@ SELECT ROWNUM
     WHERE ROWNUM <= 3;
 
 
+SELECT ROWNUM
+     , A.MAJOR
+     , A.SYEAR
+     , A.AVGRES
+    FROM (
+            SELECT ST.MAJOR
+                 , ST.SYEAR
+                 , ROUND(AVG(SC.RESULT), 2) AS AVGRES
+                FROM SCORE SC
+                JOIN STUDENT ST
+                ON SC.SNO = ST.SNO
+                GROUP BY ST.MAJOR, ST.SYEAR
+                ORDER BY ROUND(AVG(SC.RESULT), 2) DESC
+        ) A
+    WHERE ROWNUM <= 3;
 
 
 
@@ -76,9 +121,33 @@ SELECT ROWNUM
     ON C.CNO = A.CNO
     WHERE ROWNUM <= 3;
 
+
+
+SELECT A.CNO
+     , A.CNAME
+     , A.PNO
+     , A.PNAME
+     , A.AVGRES
+    FROM (
+                SELECT CNO
+                     , C.CNAME
+                     , PNO
+                     , P.PNAME
+                     , ROUND(AVG(SC.RESULT), 2) AS AVGRES
+                    FROM SCORE SC
+                    NATURAL JOIN COURSE C
+                    NATURAL JOIN PROFESSOR P
+                    GROUP BY CNO, C.CNAME, PNO, P.PNAME
+                    ORDER BY ROUND(AVG(SC.RESULT), 2) DESC
+    ) A
+    
+    WHERE ROWNUM <= 3;
+
+
+
     
 
---5) 교수별로 현재 수강중인 학생의 수를 검색하세요.
+--5) 교수별로 현재 수강중인 학생의 수를 검색하세요. (모두 100)
 SELECT A.PNO
      , A.PNAME
      , COUNT(*)
@@ -94,4 +163,15 @@ SELECT A.PNO
     GROUP BY A.PNO, A.PNAME;
 
 
-
+--서브쿼리, 인라인뷰 없이 진행도 가능하다!!
+SELECT P.PNO
+     , P.PNAME
+     , COUNT(*)
+    FROM SCORE SC
+    JOIN STUDENT ST
+    ON SC.SNO = ST.SNO
+    JOIN COURSE C
+    ON C.CNO = SC.CNO
+    JOIN PROFESSOR P
+    ON P.PNO = C.PNO
+    GROUP BY P.PNO, P.PNAME;
