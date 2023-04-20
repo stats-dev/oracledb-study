@@ -407,16 +407,124 @@ VALUES(1, NULL, NULL, 0, 3000, 500);
 
 
 
+--1. NOT NULL은 NULL 값을 저장하지 못하게 막아주는 제약조건
+--2. NOT NULL은 CREATE TABLE 쿼리에서 컬럼 옆에만 지정할 수 있다.
+--3. PK = UK + NOT NULL + INDEX;
+--4. 여러 개의 컬럼에 지정 가능하다.
+--5. NOT NULL 생성 방법
+--    - CREATE TABLE 테이블명(
+--            컬럼1 데이터타입 NOT NULL,
+--            컬럼2 데이터타입 NOT NULL,
+--            ....
+--    );
+--1-5. NOT NULL
+CREATE TABLE EMP_NOT_NULL(
+    ENO NUMBER PRIMARY KEY,
+    ENAME VARCHAR2(20) NOT NULL,
+    JOB VARCHAR2(10) NOT NULL,
+    MGR NUMBER, --사수는 나중에, 신입사원 기준
+    HDATE DATE NOT NULL,
+    DNO NUMBER NOT NULL
+);
+
+--NOT NULL으로 지정된 컬럼에 NULL을 저장하면 에러가 발생.
+INSERT INTO EMP_NOT_NULL
+VALUES(1, '홍길동', NULL, 0, SYSDATE, 0); --ORA-01400: NULL을 ("C##STUDY"."EMP_NOT_NULL"."JOB") 안에 삽입할 수 없습니다
+--NULL을 채워야 제대로 입력 가능.
+
+
+
+--1-6. DEFAULT
+CREATE TABLE EMP_DEF(
+    ENO NUMBER PRIMARY KEY,
+    ENAME VARCHAR2(20) NOT NULL,
+    JOB VARCHAR2(10) DEFAULT '개발' NOT NULL, --NOT NULL 뒤로 빼기
+    MGR NUMBER,
+    HDATE DATE DEFAULT SYSDATE NOT NULL,
+    DNO NUMBER NOT NULL
+);
+
+--DEFAULT로 지정된 컬럼 제외한 데이터 저장
+INSERT INTO EMP_DEF(ENO, ENAME, MGR, DNO)
+VALUES(1, '홍길동', 0, 1); --JOB, HDATE를 안넣어보고 그 결과를 봅시다!
+
+COMMIT;
+
+SELECT *
+    FROM EMP_DEF;
+
+
+
+--1. CREATE TABLE 테이블명(
+--        컬럼명1 데이터타입 [PK] [DEFAULT 기본값] [NOT NULL], --PK, NOT NULL은 옵션
+--        컬럼명2 데이터타입 [DEFAULT 기본값] [NOT NULL],
+--        컬럼명3 데이터타입 [DEFAULT 기본값] [NOT NULL],
+--        ...,
+--        CONSTRAINT 제약조건명1 PRIMARY KEY(컬럼명1, 컬럼명2, ...),
+--        CONSTRAINT 제약조건명2 FOREIGN KEY(컬럼명1, 컬럼명2, ...), --여러개 가능하지만 보통 한개만함.
+--            REFERENCES 참조할 테이블명(참조할 컬럼명1, 참조할 컬럼명2, ...),
+--            [ON DELETE CASCADE]
+--            [ON UPDATE CASCADE], --ORACLE은 UPDATE X
+--        CONSTRAINT 제약조건명3 UNIQUE(컬럼명),
+--        CONSTRAINT 제약조건명4 CHECK(컬럼 + 조건)
+--    );
+--
+
+
+
+--1-7. 모든 제약 조건 추가된 테이블 생성
+CREATE TABLE FACTORY1(
+        FNO NUMBER,
+        FNAME VARCHAR2(50) NOT NULL,
+        LOC VARCHAR2(10) DEFAULT '서울',
+        CONSTRAINT PK_FAC_FNO PRIMARY KEY(FNO)
+);
+
+CREATE TABLE GOODS1(
+        GNO NUMBER,
+        GNAME VARCHAR2(50),
+        PRI NUMBER DEFAULT 10000,
+        FNO NUMBER NOT NULL,
+        CONSTRAINT PK_GOODS_GNO PRIMARY KEY(GNO),
+        CONSTRAINT FK_GOODS_FNO FOREIGN KEY(FNO)
+            REFERENCES FACTORY1(FNO) --외래 키는 무조건 PK나 UK로 지정된 것만 참조해서 가져다 쓴다!!!
+);
+
+CREATE TABLE PROD1(
+    PNO NUMBER,
+    GNO NUMBER NOT NULL,
+    PRICE NUMBER DEFAULT 7000,
+    PDATE DATE,
+    CONSTRAINT PK_PROD_PNO PRIMARY KEY(PNO),
+    CONSTRAINT FK_PROD_GNO FOREIGN KEY(GNO)
+        REFERENCES GOODS1(GNO)
+);
 
 
 
 
 
+CREATE TABLE FACTORY(
+        FNO NUMBER PRIMARY KEY, --공장번호
+        FNAME VARCHAR2(50) NOT NULL, -- 공장이름
+        LOC VARCHAR2(10) DEFAULT '서울' --공장위치
+);
 
+CREATE TABLE GOODS(
+        GNO NUMBER PRIMARY KEY, --제품번호
+        GNAME VARCHAR2(50), --제품이름
+        PRI NUMBER DEFAULT 10000, --제품단가
+        FNO NUMBER NOT NULL, --공장번호
+        CONSTRAINT FK_FNO FOREIGN KEY(FNO)
+            REFERENCES FACTORY(FNO)
+);
 
+CREATE TABLE PROD(
+        PNO NUMBER PRIMARY KEY, --제품번호?
+        GNO NUMBER NOT NULL CONSTRAINT FK_GNO --제품번호
+            REFERENCES GOODS(GNO), --참조할 테이블을 잘 확인해야한다.
+        PRICE NUMBER DEFAULT 7000, --제품가격
+        PDATE DATE  --생산일자?
+);
 
-
-
-
-
-
+COMMIT;
