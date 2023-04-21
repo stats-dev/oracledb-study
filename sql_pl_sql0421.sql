@@ -312,14 +312,65 @@ END;
 /
 
 
+SELECT *
+    FROM STUDENT_RECORD
+    WHERE SNO LIKE '2000%';
 
 
 
 
 
+--연관배열의 메소드
+DECLARE
+    TYPE STU_ARRAY IS TABLE OF STUDENT%ROWTYPE
+    INDEX BY PLS_INTEGER;
+    STUARR STU_ARRAY;
 
+BEGIN
+    STUARR(1).SNO := 20000 + 1;
+    STUARR(1).SNAME := 'B' || 1;
+    STUARR(1).MAJOR := '소프트웨어';
+    STUARR(1).SYEAR := 1;
+    
+    STUARR(2).SNO := 20000 + 2;
+    STUARR(2).SNAME := 'B' || 2;
+    STUARR(2).MAJOR := '소프트웨어';
+    STUARR(2).SYEAR := 2;
+    
+    STUARR(3).SNO := 20000 + 3;
+    STUARR(3).SNAME := 'B' || 3;
+    STUARR(3).MAJOR := '소프트웨어';
+    STUARR(3).SYEAR := 3;
+    
+    STUARR(10).SNO := 20000 + 10;
+    STUARR(10).SNAME := 'B' || 10;
+    STUARR(10).MAJOR := '소프트웨어';
+    STUARR(10).SYEAR := 4;
+    
+    
+    
+    --EXISTS 함수는 TRUE/FAULSE를 리턴하기 때문에 출력하는 매개변수로 사용불가
+    --IF나 CASE 조건절에 사용한다.
+--    DBMS_OUTPUT.PUT_LINE(STUARR.EXISTS(4)); --4번 존재?
+    DBMS_OUTPUT.PUT_LINE(STUARR.COUNT);
+    DBMS_OUTPUT.PUT_LINE(STUARR.LIMIT);
+    DBMS_OUTPUT.PUT_LINE(STUARR.FIRST);
+    DBMS_OUTPUT.PUT_LINE(STUARR.LAST);
+    DBMS_OUTPUT.PUT_LINE(STUARR.PRIOR(10)); --10번 앞에 SNO 반환
+    DBMS_OUTPUT.PUT_LINE(STUARR.NEXT(1));
+    
+    
+    STUARR.DELETE(3);--DELETE는 출력되진 않음.
+--    DBMS_OUTPUT.PUT_LINE(STUARR.EXISTS(3)); --출력 문제 발생
+    IF STUARR.EXISTS(3) THEN --EXITSTS는 조건식으로만 사용이 가능해보인다. 차후 추가하기.
+        DBMS_OUTPUT.PUT_LINE('3번 INDEX 있음');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('3번 INDEX 없음');
+    END IF;
+    
+    DBMS_OUTPUT.PUT_LINE(STUARR.COUNT);
 
-
-
+END;
+/
 
 
