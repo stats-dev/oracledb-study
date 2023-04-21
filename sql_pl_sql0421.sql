@@ -240,6 +240,81 @@ END;
 /
 
 
+--레코드 연관배열 입력
+DECLARE
+    TYPE STU_REC IS RECORD( --변수명 아무거나 가능.
+        --사용할 다양한 데이터타입의 변수들 선언
+        SNO VARCHAR2(5) NOT NULL := '11012',
+        SNAME STUDENT.SNAME%TYPE,
+        SEX STUDENT.SEX%TYPE,
+        SYEAR NUMBER(1) DEFAULT 1,
+        MAJOR STUDENT.MAJOR%TYPE,
+        AVR STUDENT.AVR%TYPE  
+    );
+    
+    --레코드 타입의 배열 선언
+    TYPE STUDENT_ARRAY IS TABLE OF STU_REC
+    INDEX BY PLS_INTEGER;
+    
+    STUARR STUDENT_ARRAY;
+    
+    IDX NUMBER := 1; --인덱스 선언
+    
+BEGIN
+    LOOP
+        STUARR(IDX).SNO := 10000 + IDX;
+        STUARR(IDX).SNAME := 'A'; --이건 동일하게 넣기
+        STUARR(IDX).SYEAR := MOD(IDX, 4) + 1; --1234 나온다.
+        STUARR(IDX).MAJOR := '컴공';
+        
+        
+        INSERT INTO STUDENT_RECORD
+        VALUES STUARR(IDX);
+        
+        IDX := IDX + 1;
+        EXIT WHEN IDX > 10;
+    END LOOP;
+END;
+/
+
+
+
+--지정한 값만 들어가고 나머지 값(성별, 학점)은 NULL로 잡힙니다!
+SELECT *
+    FROM STUDENT_RECORD
+    WHERE SNO LIKE '1000%';
+
+
+
+--ROWTYPE을 이용해서 연관배열 생성
+DECLARE
+    TYPE STU_ARRAY IS TABLE OF STUDENT%ROWTYPE
+    INDEX BY PLS_INTEGER;
+    
+    IDX NUMBER := 1;
+    
+    STUARR STU_ARRAY;
+
+BEGIN
+    LOOP
+        STUARR(IDX).SNO := 20000 + IDX;
+        STUARR(IDX).SNAME := 'B' || IDX;
+        STUARR(IDX).MAJOR := '소프트웨어';
+        STUARR(IDX).SYEAR := MOD(IDX, 4) + 1; --IDX가 0이면 1234인데 1로 지정해서, 2학년부터 나올 수 밖에 없음.
+        
+        INSERT INTO STUDENT_RECORD
+        VALUES STUARR(IDX); --하나씩 꺼내서 입력하도록 함.
+        
+        IDX := IDX + 1;
+        EXIT WHEN IDX > 10;
+    END LOOP;   
+END;
+/
+
+
+
+
+
 
 
 
