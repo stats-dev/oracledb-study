@@ -374,3 +374,195 @@ END;
 /
 
 
+
+
+--3. 명시적 커서의 선언
+--    - CURSOR 커서명 IS 쿼리문;
+--    - 선언부(DECLARE)에서 작성
+--
+--4. 커서의 사용 방법
+--    - 실행부(BEGIN)에서 사용
+--    - OPEN 커서명;
+--    - FETCH 커서명 INTO 변수; --커서로부터 읽어온 데이터를 사용
+--    - CLOSE 커서명; --END가 아님에 유의한다.
+
+--1-8. 커서
+--한 행만 조회하는 커서
+--쿼리의 결과를 저장하고 있는 커서
+DECLARE
+    --커서 선언
+    CURSOR CURST IS 
+        --쿼리문
+        SELECT SNO
+             , SNAME
+             , MAJOR
+             , SYEAR
+            FROM STUDENT
+            WHERE SNO='915301'; --한 행만 가져와야하기 때문이다. 여러행은? LOOP문 사용
+            
+    --담아줄 변수 선언 
+        --(여기서는 레코드로 선언!)
+    TYPE STREC IS RECORD(
+        SNO VARCHAR2(8),
+        SNAME VARCHAR2(20),
+        MAJOR VARCHAR2(20),
+        SYEAR NUMBER(1, 0)
+    );
+    
+    STUREC STREC; --STUREC 이렇게 변수를 하나 만들어줘야 합니다!!
+    
+BEGIN
+    OPEN CURST;
+    
+    FETCH CURST INTO STUREC; --레코드에 담기
+    
+    DBMS_OUTPUT.PUT_LINE(STUREC.SNO);
+    DBMS_OUTPUT.PUT_LINE(STUREC.SNAME);
+    DBMS_OUTPUT.PUT_LINE(STUREC.MAJOR);
+    DBMS_OUTPUT.PUT_LINE(STUREC.SYEAR);
+    
+    CLOSE CURST;
+END;
+/
+
+
+--여러개의 행을 담고 있는 커서의 처리 방식1
+    --기본 LOOP, FOR LOOP 버전 두가지 
+DECLARE
+    CURSOR CURST IS
+        SELECT SNO
+             , SNAME
+             , SEX
+             , SYEAR
+             , MAJOR
+             , AVR
+            FROM STUDENT
+            WHERE SYEAR = 1;
+    --변수 선언 STROW       
+    STROW STUDENT%ROWTYPE;
+BEGIN
+    OPEN CURST; --CURST의 여러개의 데이터처리
+    
+    LOOP
+        FETCH CURST INTO STROW; --FETCH는 한 행씩 가져오는 역할이다.
+        
+        DBMS_OUTPUT.PUT_LINE(STROW.SNO);
+        DBMS_OUTPUT.PUT_LINE(STROW.SNAME);
+        DBMS_OUTPUT.PUT_LINE(STROW.SYEAR);
+        DBMS_OUTPUT.PUT_LINE(STROW.MAJOR);
+        -- 커서명%ROWCOUNT : 현재까지 추출된 행의 개수를 리턴.
+        DBMS_OUTPUT.PUT_LINE(CURST%ROWCOUNT);
+        
+        EXIT WHEN CURST%NOTFOUND; --다음 데이터(CURST) 없으면 끝나도록 합니다. NOTFOUND 정리 필요.
+    END LOOP;
+    
+        CLOSE CURST; --JAVA의 SC.CLOSE같이 오픈된 상태로 계속 남아있어서 반드시 끝내야함.
+END;
+/
+
+--여러행을 담고있는 CURSR의
+            
+DECLARE
+    --커서 선언
+    CURSOR CURST IS 
+        --쿼리문
+        SELECT SNO
+             , SNAME
+             , MAJOR
+             , SYEAR
+            FROM STUDENT
+            WHERE SNO='915301'; --한 행만 가져와야하기 때문이다. 여러행은? LOOP문 사용
+            
+    --담아줄 변수 선언 
+        --(여기서는 레코드로 선언!)
+    TYPE STREC IS RECORD(
+        SNO VARCHAR2(8),
+        SNAME VARCHAR2(20),
+        MAJOR VARCHAR2(20),
+        SYEAR NUMBER(1, 0)
+    );
+    
+    STUREC STREC; --STUREC 이렇게 변수를 하나 만들어줘야 합니다!!
+    
+BEGIN
+    OPEN CURST;
+    
+    FETCH CURST INTO STUREC; --레코드에 담기
+    
+    DBMS_OUTPUT.PUT_LINE(STUREC.SNO);
+    DBMS_OUTPUT.PUT_LINE(STUREC.SNAME);
+    DBMS_OUTPUT.PUT_LINE(STUREC.MAJOR);
+    DBMS_OUTPUT.PUT_LINE(STUREC.SYEAR);
+    
+    CLOSE CURST;
+END;
+/
+
+
+--여러개의 행을 담고 있는 커서의 처리 방식1
+    --기본 LOOP, FOR LOOP 버전 두가지 
+DECLARE
+    CURSOR CURST IS
+        SELECT SNO
+             , SNAME
+             , SEX
+             , SYEAR
+             , MAJOR
+             , AVR
+            FROM STUDENT
+            WHERE SYEAR = 1;
+    --변수 선언 STROW       
+    STROW STUDENT%ROWTYPE;
+BEGIN    
+    --자동 OPEN, FETCH, CLOSE 실행
+        -- FOR 루프 사용하면 좋다.
+    FOR STROW IN CURST LOOP
+        DBMS_OUTPUT.PUT_LINE(STROW.SNO);
+        DBMS_OUTPUT.PUT_LINE(STROW.SNAME);
+        DBMS_OUTPUT.PUT_LINE(STROW.SYEAR);
+        DBMS_OUTPUT.PUT_LINE(STROW.MAJOR);
+        -- 커서명%ROWCOUNT : 현재까지 추출된 행의 개수를 리턴.
+        DBMS_OUTPUT.PUT_LINE(CURST%ROWCOUNT);
+    END LOOP;
+    
+END;
+/
+
+
+--커서의 파라미터
+--고정된 쿼리 결과가 아닌 유동적인 쿼리의 결과를 커서에 담아준다.
+DECLARE
+    CURSOR CURST(PARAM_SYEAR NUMBER) IS
+        SELECT SNO
+             , SNAME
+             , MAJOR
+             , SYEAR
+             FROM STUDENT
+             WHERE SYEAR = PARAM_SYEAR;
+             
+        TYPE STREC IS RECORD( --다 가져와야함. 레코드 사용
+            SNO STUDENT.SNO%TYPE,
+            SNAME STUDENT.SNAME%TYPE,
+            MAJOR STUDENT.MAJOR%TYPE,
+            SYEAR STUDENT.SYEAR%TYPE
+        
+        
+        );
+        
+        STROW STREC;
+BEGIN
+    OPEN CURST(2);
+    LOOP
+        FETCH CURST INTO STROW;
+        EXIT WHEN CURST%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('--------------2학년----------------');
+        DBMS_OUTPUT.PUT_LINE(STROW.SNO);
+        DBMS_OUTPUT.PUT_LINE(STROW.SNAME);
+        DBMS_OUTPUT.PUT_LINE(STROW.SYEAR);
+        DBMS_OUTPUT.PUT_LINE(STROW.MAJOR);
+    END LOOP;
+    
+    CLOSE CURST;
+END;
+/
+        
