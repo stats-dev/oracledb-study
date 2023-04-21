@@ -1,0 +1,75 @@
+--1. PL/SQL
+SET SERVEROUTPUT ON;
+
+
+--1-6. 레코드
+DECLARE
+    TYPE STU_REC IS RECORD( --변수명 아무거나 가능.
+        SNO VARCHAR2(5) NOT NULL := '11012',
+        SNAME STUDENT.SNAME%TYPE,
+        SEX STUDENT.SEX%TYPE,
+        MAJOR STUDENT.MAJOR%TYPE,
+        SYEAR NUMBER(1) DEFAULT 1,
+        AVR STUDENT.AVR%TYPE  
+    );
+    
+    STUDENTREC STU_REC;
+BEGIN
+    STUDENTREC.SNO := '11010'; --위에서 만든 변수명 넣기
+    STUDENTREC.SNAME := '고기천';
+    STUDENTREC.SEX := '남';
+    STUDENTREC.MAJOR := '화학';
+    STUDENTREC.AVR := 2.5;
+    
+    
+    DBMS_OUTPUT.PUT_LINE(STUDENTREC.SNO);
+    DBMS_OUTPUT.PUT_LINE(STUDENTREC.SNAME);
+    DBMS_OUTPUT.PUT_LINE(STUDENTREC.SEX);
+    DBMS_OUTPUT.PUT_LINE(STUDENTREC.MAJOR);
+    DBMS_OUTPUT.PUT_LINE(STUDENTREC.AVR);
+END;
+/
+
+--레코드를 이용해서 데이터 저장할 테이블 생성
+CREATE TABLE STUDENT_RECORD
+AS SELECT * FROM STUDENT;
+
+
+--레코드를 이용해서 데이터 저장
+
+DECLARE
+    TYPE STU_REC IS RECORD( --변수명 아무거나 가능.
+        SNO VARCHAR2(8) NOT NULL := '11012',
+        SNAME STUDENT.SNAME%TYPE,
+        SEX STUDENT.SEX%TYPE,
+        SYEAR NUMBER(1, 0) DEFAULT 1,
+        MAJOR STUDENT.MAJOR%TYPE,
+        AVR STUDENT.AVR%TYPE  
+    );
+    
+    STUDENTREC STU_REC;
+BEGIN
+    STUDENTREC.SNO := '11010'; --위에서 만든 변수명 넣기
+    STUDENTREC.SNAME := '고기천';
+    STUDENTREC.SEX := '남';
+    STUDENTREC.MAJOR := '화학';
+    STUDENTREC.AVR := 2.5;
+    
+    --인서트
+    INSERT INTO STUDENT_RECORD
+    VALUES STUDENTREC; --위에 입력했던 것을 바로 집어넣겠다. 타입과 순서를 잘 맞춰야 합니다.
+END;
+/
+
+
+
+--저장된 데이터 확인
+SELECT *
+    FROM STUDENT_RECORD
+    WHERE SNO = '11010';
+
+
+
+
+
+
