@@ -554,6 +554,7 @@ BEGIN
     OPEN CURST(2);
     LOOP
         FETCH CURST INTO STROW;
+        
         EXIT WHEN CURST%NOTFOUND;
         DBMS_OUTPUT.PUT_LINE('--------------2학년----------------');
         DBMS_OUTPUT.PUT_LINE(STROW.SNO);
@@ -566,3 +567,97 @@ BEGIN
 END;
 /
         
+        
+        
+--묵시적 커서
+--실행된 쿼리문의 결과를 담고있는 커서
+--따로 커서를 선언하지 않는다.
+BEGIN
+    UPDATE STUDENT
+        SET
+            SYEAR = 0
+        WHERE SYEAR = 1; --1학년을 0으로!    
+        
+    DBMS_OUTPUT.PUT_LINE(SQL%ROWCOUNT);
+END;
+/
+
+SELECT *
+    FROM STUDENT
+    WHERE SYEAR = 0;
+    
+
+
+--1-9. 예외처리
+--EXCEPTION으로 예외처리부를 작성한다.
+DECLARE 
+    VAL_SNO NUMBER;
+BEGIN
+    SELECT SNAME INTO VAL_SNO
+        FROM STUDENT
+        WHERE SNO = '915301'; --하나만 호출, 숫자는 자동 형변환..
+        
+    DBMS_OUTPUT.PUT_LINE('예외발생시 실행안됨');    
+EXCEPTION
+    WHEN VALUE_ERROR THEN
+        DBMS_OUTPUT.PUT_LINE('수치가 부적합');
+        ROLLBACK; --대부분 롤백처리함.
+END;
+/
+
+
+--EXCEPTION으로 예외처리부를 작성한다.
+--UPDATE시 에러발생 처리 ROLLBACK
+DECLARE
+    VAL_SNO VARCHAR2(10);
+BEGIN
+    VAL_SNO := 'A';
+    
+    UPDATE STUDENT
+        SET
+            SYEAR = VAL_SNO --숫자에 문자 들어가니 예외처리 발생.
+        WHERE SNO = '915301';
+     
+    DBMS_OUTPUT.PUT_LINE('예외발생시 실행안됨');    
+EXCEPTION
+    WHEN INVALID_NUMBER THEN --이경우 INVALID_NUMBER 써야함.
+        DBMS_OUTPUT.PUT_LINE('수치가 부적합');
+        ROLLBACK; --대부분 롤백처리함.
+        DBMS_OUTPUT.PUT_LINE('롤백완료');
+    
+END;       
+/
+
+
+
+DECLARE
+    VAL_SNO VARCHAR2(10);
+BEGIN
+    VAL_SNO := 'A';
+    
+    UPDATE STUDENT
+        SET
+            SYEAR = VAL_SNO --숫자에 문자 들어가니 예외처리 발생.
+        WHERE SNO = '915301';
+     
+    DBMS_OUTPUT.PUT_LINE('예외발생시 실행안됨');    
+EXCEPTION
+    WHEN VALUE_ERROR THEN 
+        DBMS_OUTPUT.PUT_LINE('값이 부적합');
+        ROLLBACK; 
+        DBMS_OUTPUT.PUT_LINE('롤백완료');
+    WHEN TOO_MANY_ROWS THEN
+        DBMS_OUTPUT.PUT_LINE('행이 너무 많음');
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('롤백완료');
+    WHEN OTHERS THEN --이경우 INVALID_NUMBER 써야함. 이걸 OTHERS에서 처리함.
+        DBMS_OUTPUT.PUT_LINE(SQLCODE);
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('수치가 부적합');
+        ROLLBACK;
+        DBMS_OUTPUT.PUT_LINE('롤백완료');
+    
+END;       
+/
+
+
