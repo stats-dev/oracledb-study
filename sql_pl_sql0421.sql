@@ -39,7 +39,6 @@ END;
 CREATE TABLE STUDENT_RECORD
 AS SELECT * FROM STUDENT;
 
-
 --레코드를 이용해서 데이터 저장
 DECLARE
     TYPE STU_REC IS RECORD( --변수명 아무거나 가능.
