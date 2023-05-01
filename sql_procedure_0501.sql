@@ -210,6 +210,30 @@ EXEC P_NEW_DEPT('98', '테스트', '대전', '2001');
 SELECT * FROM DEPT;
 
 
+--2. Stored Function
+--급여별로 세금 조회하는 함수
+CREATE OR REPLACE FUNCTION F_GETTAX
+(
+    SAL NUMBER
+)
+RETURN NUMBER
 
+IS
+    TAX NUMBER;
+BEGIN
+    IF SAL >= 7000 THEN TAX := 0.1;
+    ELSIF SAL >= 6000 THEN TAX := 0.07;
+    ELSIF SAL >= 5000 THEN TAX := 0.05;
+    ELSE TAX := 0.03;
+    END IF;
+
+    RETURN ROUND(SAL * TAX);
+END;
+/
+
+--F_GETTAX 함수 쿼리문에서 호출
+SELECT E.*
+     , F_GETTAX(E.SAL) AS TAX --프로시저는 안되지만 함수는 이렇게 감쌀 수 있다.
+    FROM EMP E;
 
 
