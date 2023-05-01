@@ -209,6 +209,8 @@ END;
 --해설
 --3) 과목번호, 과목이름, 과목별 평균 기말고사 성적을 갖는 레코드의 배열을 만들고
 --   기본 LOOP문을 이용해서 모든 과목의 과목번호, 과목이름, 과목별 평균 기말고사 성적을 출력하세요.
+--   기본 LOOP문은 커서를 무조건 선언해서 해결해야 한다.
+--   아니면 FOR LOOP로 한다.
 DECLARE
     TYPE COURSEAVG_REC IS RECORD(
         CNO COURSE.CNO%TYPE,

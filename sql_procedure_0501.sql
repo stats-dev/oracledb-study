@@ -70,7 +70,7 @@ IS
         JOIN SCGRADE GR
         ON T.RESULT BETWEEN GR.LOSCORE AND GR.HISCORE;
         
-    ROW_NCREC P_NCHE_REC%ROWTYPE;
+--    ROW_NCREC P_NCHE_REC%ROWTYPE;
         
 
 BEGIN
@@ -81,27 +81,39 @@ BEGIN
         --FETCH
         FETCH CURST INTO ROW_NCREC;
         
+        --종료조건명시
+        EXIT WHEN ROW_NCREC%NOTFOUND;
+        
         --점수별 등급 조건문(IF THEN~ELSIF THEN~ELSE)
-        IF P_NCHE_REC.SCORE >= 90
-        THEN P_NCHE_REC.GRADE := 'A';
-        ELSIF P_NCHE_REC.SCORE >= 80
-        THEN P_NCHE_REC.GRADE := 'B';
-        ELSIF P_NCHE_REC.SCORE >= 70
-        THEN P_NCHE_REC.GRADE := 'C';
-        ELSE P_NCHE_REC.SCORE >= 60
-        THEN P_NCHE_REC.GRADE := 'D';
-        
-        
+        IF P_NCHE_REC.SCORE >= 90 THEN
+        P_NCHE_REC.GRADE := 'A';
+        ELSIF P_NCHE_REC.SCORE >= 80 THEN
+        P_NCHE_REC.GRADE := 'B';
+        ELSIF P_NCHE_REC.SCORE >= 70 THEN
+        P_NCHE_REC.GRADE := 'C';
+        ELSIF P_NCHE_REC.SCORE >= 60 THEN
+        P_NCHE_REC.GRADE := 'D';
+        ELSE P_NCHE_REC.GRADE := 'F';
+        END IF;
+
         --인서트문 
-        INSERT INTO ();
-        
+        INSERT INTO T_NCHE_SCGR1
+        VALUES NCREC;
+   
     --루프끝
     END LOOP;
     
     --커서 클로즈
-    
+    CLOSE CURST;
+
 END;
 /
+
+EXEC P_NCHE_SCGR;
+
+SELECT *
+    FROM T_NCHE_SCGR1;
+
     
     
 CREATE OR REPLACE PROCEDURE P_NCHE_SCGR
@@ -167,3 +179,37 @@ EXEC P_NCHE_SCGR;
 
 SELECT *
     FROM T_NCHE_SCGR1;
+    
+    
+--1-2. 파라미터가 있는 프로시저
+CREATE OR REPLACE PROCEDURE P_NEW_DEPT
+(
+    DNO IN VARCHAR2,
+    DNAME IN VARCHAR2,
+    LOC IN VARCHAR2,
+--    DIRECTOR IN VARCHAR2 := '1111' --안 넣어도 자동으로 입력됨.
+    DIRECTOR IN VARCHAR2 DEFAULT '1111' --이렇게도 가능하다.
+)
+IS 
+
+BEGIN
+    INSERT INTO DEPT
+    VALUES (
+        DNO,
+        DNAME,
+        LOC, --3개만 이제 넣어줄 때 해도 1111이 DIRECTOR에 들어감.
+        DIRECTOR
+    );
+END;
+/
+
+--프로시저 호출 시 파라미터 전달
+--EXEC P_NEW_DEPT('99', '배포', '수원');
+EXEC P_NEW_DEPT('98', '테스트', '대전', '2001');
+
+SELECT * FROM DEPT;
+
+
+
+
+
