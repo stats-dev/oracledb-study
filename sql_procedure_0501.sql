@@ -237,3 +237,57 @@ SELECT E.*
     FROM EMP E;
 
 
+--3. TRIGGER
+--3-1. BEFORE TRIGGER
+--급여가 3000미만으로 입력됐을 때 
+--에러메시지 출력하는 트리거
+CREATE OR REPLACE TRIGGER TR_EMP_SAL1
+BEFORE
+INSERT OR UPDATE OF SAL ON EMP
+REFERENCING NEW AS NEW
+FOR EACH ROW
+BEGIN
+    IF :NEW.SAL < 3000 THEN 
+        IF INSERTING THEN
+            -- 사용자 정의 에러
+            RAISE_APPLICATION_ERROR(-20000, '최저급여보다 낮음');
+        ELSIF UPDATING THEN
+            RAISE_APPLICATION_ERROR(-20001, '최저급여보다 낮음');
+        ELSE RAISE_APPLICATION_ERROR(-20002, '최저급여보다 낮음');
+        END IF;
+    END IF; --위에서 보면 IF문이 중첩되어있다.
+END;
+/
+
+INSERT INTO EMP
+VALUES(
+        '8001',
+        '홍길동',
+        '취합',
+        '2001',
+        SYSDATE,
+        2999,
+        0,
+        '01');
+
+SELECT *
+    FROM EMP; --BEFORE라서 실행전에 수행되므로 8001번 생성되지 않음.
+        
+INSERT INTO EMP
+VALUES(
+        '8001',
+        '홍길동',
+        '취합',
+        '2001',
+        SYSDATE,
+        3100,
+        0,
+        '01');
+
+
+UPDATE EMP
+    SET
+--        SAL = 2999 --  ORA-20001: 최저급여보다 낮음
+        SAL = 3200
+    WHERE ENO = '9999';
+        
