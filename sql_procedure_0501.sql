@@ -242,7 +242,7 @@ SELECT E.*
 --급여가 3000미만으로 입력됐을 때 
 --에러메시지 출력하는 트리거
 CREATE OR REPLACE TRIGGER TR_EMP_SAL1
-BEFORE
+AFTER
 INSERT OR UPDATE OF SAL ON EMP
 REFERENCING NEW AS NEW
 FOR EACH ROW
@@ -272,6 +272,7 @@ VALUES(
 
 SELECT *
     FROM EMP; --BEFORE라서 실행전에 수행되므로 8001번 생성되지 않음.
+
         
 INSERT INTO EMP
 VALUES(
@@ -289,7 +290,7 @@ UPDATE EMP
     SET
 --        SAL = 2999 --  ORA-20001: 최저급여보다 낮음
         SAL = 3200
-    WHERE ENO = '9999';
+    WHERE ENO = '8001';
         
         
 --3-2. AFTER TRIGGER
@@ -326,6 +327,10 @@ END;
 /
 
 --DROP TRIGGER TR_NCHE_SCGR1;
+
+--DELETE FROM T_NCHE_SC1
+--    WHERE SNO = '8002';
+
 
 INSERT INTO T_NCHE_SC1
 VALUES (8002, 1211, 94, '고기천');
